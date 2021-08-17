@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+
+class VirementCard extends StatelessWidget {
+  final Map<String, dynamic>
+      map; //compte1, compte2, color1, color2, nom1, nom2, ancienSolde1, ancienSolde2, montant
+  VirementCard(this.map);
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Container(
+        //Container that does the shadow
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: Offset(0, 1), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 12,
+            left: 12,
+            right: 12,
+            bottom: 5,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _centeredText('Virement de 100.00€'),
+              _bankInfo(map['color1'], map['compte1'], map['nom1']),
+              _transfertInfo(map['ancienSolde1'],
+                  -map['montant']), //replace -100 by -map['montant']
+              //ancienSolde1 -> nouveauSolde1
+              _centeredText('Vers'),
+              _bankInfo(map['color2'], map['compte2'], map['nom2']),
+              _transfertInfo(map['ancienSolde2'],
+                  map['montant']), //ancienSolde2 -> nouveauSolde2
+              Row(
+                //crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(child: Container()),
+                  Text(
+                    'le 27/06/2021',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w200,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _bankInfo(Color color, String account, String bank) {
+    return Row(
+      children: [
+        Container(
+          //Cercle
+          width: 70,
+          height: 70,
+          decoration: new BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              account,
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 5),
+            Text(
+              bank,
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  _transfertInfo(double before, double montant) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          before.toStringAsFixed(2) + '€',
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Icon(
+          Icons.arrow_right_alt,
+          size: 40,
+        ),
+        Text(
+          (before + montant).toStringAsFixed(2) + '€',
+          style: TextStyle(
+            color: Colors.green,
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  _centeredText(String txt) {
+    return Center(
+      child: Text(
+        txt,
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
