@@ -1,4 +1,4 @@
-import 'package:budjet_app/pages/views/PageCompte.dart';
+import 'package:budjet_app/pages/views/PageComptes.dart';
 import 'package:flutter/material.dart';
 
 void main() {
