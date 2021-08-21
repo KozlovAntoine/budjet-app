@@ -1,4 +1,5 @@
 import 'package:budjet_app/pages/views/PageCompte.dart';
+import 'package:budjet_app/pages/views/PageTransactions.dart';
 import 'package:budjet_app/pages/views/PageVirement.dart';
 import 'package:flutter/material.dart';
 
@@ -57,6 +58,9 @@ class SideMenu extends StatelessWidget {
             title: Text("Transactions"),
             onTap: () {
               Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => PageTransaction(),
+              ));
             },
           ),
         ],

@@ -1,9 +1,12 @@
+import 'package:budjet_app/classes/Compte.dart';
+import 'package:budjet_app/classes/Virement.dart';
 import 'package:flutter/material.dart';
 
 class VirementCard extends StatelessWidget {
-  final Map<String, dynamic>
-      map; //compte1, compte2, color1, color2, nom1, nom2, ancienSolde1, ancienSolde2, montant
-  VirementCard(this.map);
+  final Virement virement;
+
+  VirementCard({required this.virement});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -33,14 +36,14 @@ class VirementCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _centeredText('Virement de 100.00€'),
-              _bankInfo(map['color1'], map['compte1'], map['nom1']),
-              _transfertInfo(map['ancienSolde1'],
-                  -map['montant']), //replace -100 by -map['montant']
+              _bankInfo(virement.depuis),
+              _transfertInfo(virement.depuis,
+                  -virement.montant), //replace -100 by -map['montant']
               //ancienSolde1 -> nouveauSolde1
               _centeredText('Vers'),
-              _bankInfo(map['color2'], map['compte2'], map['nom2']),
-              _transfertInfo(map['ancienSolde2'],
-                  map['montant']), //ancienSolde2 -> nouveauSolde2
+              _bankInfo(virement.vers),
+              _transfertInfo(virement.vers,
+                  virement.montant), //ancienSolde2 -> nouveauSolde2
               Row(
                 //crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -61,7 +64,7 @@ class VirementCard extends StatelessWidget {
     );
   }
 
-  _bankInfo(Color color, String account, String bank) {
+  _bankInfo(Compte compte) {
     return Row(
       children: [
         Container(
@@ -69,7 +72,7 @@ class VirementCard extends StatelessWidget {
           width: 70,
           height: 70,
           decoration: new BoxDecoration(
-            color: color,
+            color: compte.color,
             shape: BoxShape.circle,
           ),
         ),
@@ -81,12 +84,12 @@ class VirementCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              account,
+              compte.nom,
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 5),
             Text(
-              bank,
+              compte.banque,
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
           ],
@@ -95,12 +98,12 @@ class VirementCard extends StatelessWidget {
     );
   }
 
-  _transfertInfo(double before, double montant) {
+  _transfertInfo(Compte compte, double montant) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          before.toStringAsFixed(2) + '€',
+          compte.solde.toStringAsFixed(2) + '€',
           style: TextStyle(
             color: Colors.red,
             fontSize: 24,
@@ -112,7 +115,7 @@ class VirementCard extends StatelessWidget {
           size: 40,
         ),
         Text(
-          (before + montant).toStringAsFixed(2) + '€',
+          (compte.solde + montant).toStringAsFixed(2) + '€',
           style: TextStyle(
             color: Colors.green,
             fontSize: 24,

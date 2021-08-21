@@ -1,10 +1,16 @@
+import 'package:budjet_app/classes/Compte.dart';
+import 'package:budjet_app/classes/Transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class ComptesCard extends StatelessWidget {
-  final Map<String, dynamic>
-      map; //solde, nom, banque, categorie, date, montant, infoIcon
-  final Color couleurCercle;
-  ComptesCard(this.map, this.couleurCercle);
+class TransactionCard extends StatelessWidget {
+  final Compte compte;
+  final Transaction transaction;
+
+  TransactionCard({
+    required this.transaction,
+    required this.compte,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +47,12 @@ class ComptesCard extends StatelessWidget {
                     width: 70,
                     height: 70,
                     decoration: new BoxDecoration(
-                      color: couleurCercle,
+                      color: transaction.categorie.color,
                       shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      transaction.categorie.icon,
+                      size: 40,
                     ),
                   ),
                   SizedBox(width: 10),
@@ -51,7 +61,7 @@ class ComptesCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        map['solde'].toStringAsFixed(2) + '€',
+                        transaction.montant.toStringAsFixed(2) + '€',
                         style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.w700,
@@ -59,12 +69,12 @@ class ComptesCard extends StatelessWidget {
                       ),
                       SizedBox(height: 3),
                       Text(
-                        map['nom'].toString(),
+                        transaction.nom.toString(),
                         style: TextStyle(fontSize: 20),
                       ),
                       SizedBox(height: 3),
                       Text(
-                        map['banque'].toString(),
+                        transaction.categorie.nom.toString(),
                         style: TextStyle(fontSize: 18, color: Colors.black54),
                       ),
                     ],
@@ -84,35 +94,23 @@ class ComptesCard extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: new BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1,
-                      ),
+                      color: compte.color,
                       shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      map['infoIcon'],
-                      size: 24,
                     ),
                   ),
                   SizedBox(width: 5),
                   Expanded(
                     child: Column(
                       children: [
-                        Text(map['categorie'].toString(),
-                            style: TextStyle(fontSize: 18)),
-                        Text(map['date'].toString(),
-                            style: TextStyle(fontSize: 13)),
+                        Text(compte.nom, style: TextStyle(fontSize: 18)),
+                        Text(compte.banque, style: TextStyle(fontSize: 13)),
                       ],
                       crossAxisAlignment: CrossAxisAlignment.start,
                     ),
                   ),
                   Text(
-                    map['montant'].toStringAsFixed(2) + '€',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: map['montant'] > 0 ? Colors.green : Colors.red),
-                  ),
+                      "le " + DateFormat('dd-MM-yyyy').format(transaction.date),
+                      style: TextStyle(fontSize: 13)),
                 ],
               ),
             ],
