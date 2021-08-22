@@ -1,7 +1,7 @@
-import 'package:budjet_app/pages/views/PageCategories.dart';
-import 'package:budjet_app/pages/views/PageComptes.dart';
-import 'package:budjet_app/pages/views/PageTransactions.dart';
-import 'package:budjet_app/pages/views/PageVirements.dart';
+import 'package:budjet_app/pages/main/PageCategories.dart';
+import 'package:budjet_app/pages/main/PageComptes.dart';
+import 'package:budjet_app/pages/main/PageTransactions.dart';
+import 'package:budjet_app/pages/main/PageVirements.dart';
 import 'package:flutter/material.dart';
 
 class SideMenu extends StatelessWidget {

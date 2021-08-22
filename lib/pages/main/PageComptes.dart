@@ -1,6 +1,8 @@
+import 'package:budjet_app/animation/snack.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/pages/add/PageAddCompte.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/pages/views/cards/CompteCard.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -64,26 +66,35 @@ class _MesComptesPageState extends State<PageCompte> {
   }
 
   _addCard() {
-    return Card(
-      color: Colors.transparent,
-      elevation: 0,
-      child: Container(
-        height: 120,
-        child: DottedBorder(
-          borderType: BorderType.RRect,
-          radius: Radius.circular(5),
-          color: Theme.of(context).primaryColor,
-          dashPattern: [4, 8],
-          strokeWidth: 2,
-          child: Center(
-            child: Icon(
-              Icons.add_circle,
-              size: 80,
-              color: Theme.of(context).primaryColor,
+    return InkWell(
+      child: Card(
+        color: Colors.transparent,
+        elevation: 0,
+        child: Container(
+          height: 120,
+          child: DottedBorder(
+            borderType: BorderType.RRect,
+            radius: Radius.circular(5),
+            color: Theme.of(context).primaryColor,
+            dashPattern: [4, 8],
+            strokeWidth: 2,
+            child: Center(
+              child: Icon(
+                Icons.add_circle,
+                size: 80,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
         ),
       ),
+      onTap: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+              builder: (context) => PageAddCompte(),
+            ))
+            .then((value) => Snack(context, value.toString()));
+      },
     );
   }
 }

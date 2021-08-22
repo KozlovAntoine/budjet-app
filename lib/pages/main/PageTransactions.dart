@@ -4,7 +4,7 @@ import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:flutter/material.dart';
 
-import 'cards/TransactionCard.dart';
+import '../views/cards/TransactionCard.dart';
 
 class PageTransaction extends StatefulWidget {
   _PageTransactionState createState() => _PageTransactionState();
