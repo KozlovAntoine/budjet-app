@@ -5,7 +5,7 @@ import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/pages/add/PageAddCompte.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
-import 'package:budjet_app/pages/views/cards/CompteCard.dart';
+import 'package:budjet_app/views/cards/CompteCard.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 

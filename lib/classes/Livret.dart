@@ -42,4 +42,14 @@ class Livret {
   static Livret pel() {
     return Livret(name: 'PEL', interet: 0.01, plafond: 61200, decouvert: false);
   }
+
+  static final List<Livret> allLivrets = [
+    Livret.compteCourant(),
+    Livret.livretA(),
+    Livret.livretJeune(),
+    Livret.cel(),
+    Livret.ldds(),
+    Livret.lep(),
+    Livret.pel()
+  ];
 }

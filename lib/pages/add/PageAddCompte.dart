@@ -1,3 +1,5 @@
+import 'package:budjet_app/animation/snack.dart';
+import 'package:budjet_app/classes/Livret.dart';
 import 'package:flutter/material.dart';
 
 class PageAddCompte extends StatefulWidget {
@@ -11,7 +13,7 @@ class PageAddCompteState extends State<PageAddCompte> {
   final _formKey = GlobalKey<FormState>();
   final banqueController = TextEditingController();
   final compteController = TextEditingController();
-  String compteSelection = 'One';
+  Livret livretSelection = Livret.allLivrets.first;
 
   @override
   void dispose() {
@@ -41,31 +43,11 @@ class PageAddCompteState extends State<PageAddCompte> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               _carte(
-                  Icons.assignment,
-                  Expanded(
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: compteSelection,
-                      icon: const Icon(Icons.keyboard_arrow_left),
-                      iconEnabledColor: Theme.of(context).primaryColor,
-                      iconSize: 40,
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.black),
-                      underline: Container(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          compteSelection = newValue!;
-                        });
-                      },
-                      items: <String>['One', 'Two', 'Free', 'Four']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  )),
+                Icons.assignment,
+                Expanded(
+                  child: _listeCompte(),
+                ),
+              ),
               SizedBox(height: 8),
               _carte(
                 Icons.business,
@@ -84,6 +66,11 @@ class PageAddCompteState extends State<PageAddCompte> {
                   ),
                 ),
               ),
+              TextButton(
+                  onPressed: () {
+                    Snack(context, livretSelection.name);
+                  },
+                  child: Text('Enregistrer'))
             ],
           ),
         ),
@@ -92,27 +79,27 @@ class PageAddCompteState extends State<PageAddCompte> {
   }
 
   _listeCompte() {
-    return DropdownButton<String>(
+    return DropdownButton<Livret>(
       isExpanded: true,
-      value: compteSelection,
+      value: livretSelection,
       icon: const Icon(Icons.keyboard_arrow_left),
       iconSize: 40,
       iconEnabledColor: Theme.of(context).primaryColor,
       elevation: 16,
       style: const TextStyle(color: Colors.black, fontSize: 20),
       underline: Container(),
-      onChanged: (String? newValue) {
+      onChanged: (newValue) {
         setState(() {
-          compteSelection = newValue!;
+          livretSelection = newValue!;
         });
       },
-      items: <String>['One', 'Two', 'Free', 'Fouraaaaaaa']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
+      items: Livret.allLivrets.map<DropdownMenuItem<Livret>>((livret) {
+        return DropdownMenuItem<Livret>(
+          value: livret,
+          child: Text(livret.name),
         );
       }).toList(),
+      dropdownColor: Colors.white,
     );
   }
 

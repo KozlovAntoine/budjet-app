@@ -3,7 +3,7 @@ import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Virement.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
-import 'package:budjet_app/pages/views/cards/VirementCard.dart';
+import 'package:budjet_app/views/cards/VirementCard.dart';
 import 'package:flutter/material.dart';
 
 class PageVirement extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
-import 'package:budjet_app/pages/views/cards/CategorieCard.dart';
+import 'package:budjet_app/views/cards/CategorieCard.dart';
 import 'package:flutter/material.dart';
 
 class PageCategories extends StatefulWidget {
