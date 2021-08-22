@@ -102,7 +102,8 @@ class TransactionCard extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        Text(compte.nom, style: TextStyle(fontSize: 18)),
+                        Text(compte.livret.name,
+                            style: TextStyle(fontSize: 18)),
                         Text(compte.banque, style: TextStyle(fontSize: 13)),
                       ],
                       crossAxisAlignment: CrossAxisAlignment.start,

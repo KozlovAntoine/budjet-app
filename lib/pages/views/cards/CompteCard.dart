@@ -61,12 +61,12 @@ class ComptesCard extends StatelessWidget {
                       ),
                       SizedBox(height: 3),
                       Text(
-                        compte.nom.toString(),
+                        compte.livret.name,
                         style: TextStyle(fontSize: 20),
                       ),
                       SizedBox(height: 3),
                       Text(
-                        compte.banque.toString(),
+                        compte.banque,
                         style: TextStyle(fontSize: 18, color: Colors.black54),
                       ),
                     ],

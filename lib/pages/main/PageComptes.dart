@@ -1,6 +1,7 @@
 import 'package:budjet_app/animation/snack.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
+import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/pages/add/PageAddCompte.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
@@ -41,11 +42,8 @@ class _MesComptesPageState extends State<PageCompte> {
             ComptesCard(
               compte: Compte(
                   solde: 1234,
-                  nom: 'Compte courant',
+                  livret: Livret.livretA(),
                   banque: 'BNP Paribas',
-                  plafond: 22950,
-                  decouvretAutorise: 0,
-                  interet: 0.75,
                   color: Colors.blue),
               transaction: Transaction(
                   categorie: Categorie(

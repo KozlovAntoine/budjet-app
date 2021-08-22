@@ -84,7 +84,7 @@ class VirementCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              compte.nom,
+              compte.livret.name,
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 5),
