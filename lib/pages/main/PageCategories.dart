@@ -25,6 +25,7 @@ class _PageCategoriesState extends State<PageCategories> {
         ),
       ),
       body: ListView(
+        padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
         children: [
           CategorieCard(
             categorie: Categorie(

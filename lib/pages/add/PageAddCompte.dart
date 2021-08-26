@@ -44,33 +44,37 @@ class PageAddCompteState extends State<PageAddCompte> {
             children: [
               _carte(
                 Icons.assignment,
-                Expanded(
-                  child: _listeCompte(),
-                ),
+                _listeCompte(),
               ),
-              SizedBox(height: 8),
               _carte(
                 Icons.business,
-                Expanded(
-                  child: TextFormField(
-                    controller: banqueController,
-                    decoration: InputDecoration(
-                      hintText: 'ex: BNP Paribas',
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+                _fieldWithEntry(banqueController, "ex: BNP Paribas",
+                    "Entrer le nom de votre banque"),
+              ),
+              _carte(
+                Icons.euro,
+                _fieldWithTextBothSide(
+                    "Plafond",
+                    livretSelection.plafond != null
+                        ? livretSelection.plafond!.toStringAsFixed(0) + "€"
+                        : "Pas de plafond"),
+              ),
+              _carte(
+                Icons.euro,
+                _fieldWithTextBothSide("Découvert autorisé",
+                    livretSelection.decouvert ? "Oui" : "Non"),
+              ),
+              _carte(
+                Icons.euro,
+                _fieldWithTextBothSide("Intérêt",
+                    livretSelection.interet.toStringAsFixed(2) + "%"),
               ),
               TextButton(
-                  onPressed: () {
-                    Snack(context, livretSelection.name);
-                  },
-                  child: Text('Enregistrer'))
+                onPressed: () {
+                  Snack(context, livretSelection.name);
+                },
+                child: Text('Enregistrer'),
+              ),
             ],
           ),
         ),
@@ -111,6 +115,38 @@ class PageAddCompteState extends State<PageAddCompte> {
     );
   }
 
+  _fieldWithEntry(TextEditingController controller, String hint, String error) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hint,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return error;
+        }
+        return null;
+      },
+    );
+  }
+
+  _fieldWithTextBothSide(String text1, String text2) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          text1 + " :",
+          style: TextStyle(fontFamily: 'Roboto', fontSize: 20),
+        ),
+        Text(
+          text2,
+          style: TextStyle(fontFamily: 'Roboto', fontSize: 20),
+        ),
+      ],
+    );
+  }
+
   _carte(IconData icon, Widget main) {
     return Container(
       padding: EdgeInsets.only(left: 8, right: 8, top: 3, bottom: 3),
@@ -124,7 +160,7 @@ class PageAddCompteState extends State<PageAddCompte> {
             color: Colors.black,
           ),
           SizedBox(width: 10),
-          main,
+          Expanded(child: main),
         ],
       ),
       decoration: BoxDecoration(

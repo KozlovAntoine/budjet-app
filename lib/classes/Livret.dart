@@ -1,6 +1,6 @@
 class Livret {
   final String name;
-  final double? interet;
+  final double interet;
   final double? plafond;
   final bool decouvert;
 

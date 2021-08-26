@@ -27,6 +27,7 @@ class _PageTransactionState extends State<PageTransaction> {
         ),
       ),
       body: ListView(
+        padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
         children: [
           TransactionCard(
             compte: Compte(
