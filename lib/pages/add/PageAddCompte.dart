@@ -1,6 +1,8 @@
 import 'package:budjet_app/animation/snack.dart';
+import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class PageAddCompte extends StatefulWidget {
   @override
@@ -12,8 +14,23 @@ class PageAddCompte extends StatefulWidget {
 class PageAddCompteState extends State<PageAddCompte> {
   final _formKey = GlobalKey<FormState>();
   final banqueController = TextEditingController();
-  final compteController = TextEditingController();
+  final soldeController = TextEditingController();
   Livret livretSelection = Livret.allLivrets.first;
+  Color pickerColor = Color(0xff443a49);
+  Color currentColor = Color(0xff443a49);
+
+  void changeColor(Color color) {
+    setState(() => pickerColor = color);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+    soldeController
+        .addListener(() => print('soldeController: $soldeController'));
+  }
 
   @override
   void dispose() {
@@ -39,20 +56,48 @@ class PageAddCompteState extends State<PageAddCompte> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+          key: _formKey,
+          child: ListView(
             children: [
+              _carte(
+                Icons.account_balance_wallet,
+                _fieldWithEntry(
+                  soldeController,
+                  "ex: 1234.56€",
+                  TextInputType.numberWithOptions(decimal: true, signed: false),
+                  (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Entrez votre solde actuel";
+                    }
+                    try {
+                      double.parse(soldeController.text);
+                    } catch (error) {
+                      return 'Vérifiez votre entrée';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              _carte(
+                Icons.account_balance,
+                _fieldWithEntry(
+                  banqueController,
+                  "ex: BNP Paribas",
+                  TextInputType.text,
+                  (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Entrez le nom de votre banque";
+                    }
+                    return null;
+                  },
+                ),
+              ),
               _carte(
                 Icons.assignment,
                 _listeCompte(),
               ),
               _carte(
-                Icons.business,
-                _fieldWithEntry(banqueController, "ex: BNP Paribas",
-                    "Entrer le nom de votre banque"),
-              ),
-              _carte(
-                Icons.euro,
+                Icons.vertical_align_top,
                 _fieldWithTextBothSide(
                     "Plafond",
                     livretSelection.plafond != null
@@ -60,18 +105,53 @@ class PageAddCompteState extends State<PageAddCompte> {
                         : "Pas de plafond"),
               ),
               _carte(
-                Icons.euro,
+                Icons.vertical_align_bottom,
                 _fieldWithTextBothSide("Découvert autorisé",
                     livretSelection.decouvert ? "Oui" : "Non"),
               ),
               _carte(
-                Icons.euro,
-                _fieldWithTextBothSide("Intérêt",
-                    livretSelection.interet.toStringAsFixed(2) + "%"),
+                Icons.call_made,
+                _fieldWithTextBothSide(
+                    "Intérêt",
+                    "Minimum " +
+                        (livretSelection.interet * 100).toStringAsFixed(2) +
+                        "%"),
+              ),
+              InkWell(
+                child: _carte(
+                  Icons.brush,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Couleur :",
+                        style: TextStyle(fontFamily: 'Roboto', fontSize: 20),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: currentColor,
+                            borderRadius: BorderRadius.circular(5)),
+                        width: 100,
+                        height: 35,
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () => _colorPicker(),
               ),
               TextButton(
                 onPressed: () {
-                  Snack(context, livretSelection.name);
+                  if (_formKey.currentState!.validate()) {
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
+                    print(soldeController.text);
+                    /*Compte compte = Compte(
+                        solde: ,
+                        livret: livret,
+                        banque: banque,
+                        color: color);*/
+                  }
                 },
                 child: Text('Enregistrer'),
               ),
@@ -115,18 +195,15 @@ class PageAddCompteState extends State<PageAddCompte> {
     );
   }
 
-  _fieldWithEntry(TextEditingController controller, String hint, String error) {
+  _fieldWithEntry(TextEditingController controller, String hint,
+      TextInputType keyboard, validator) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         hintText: hint,
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return error;
-        }
-        return null;
-      },
+      keyboardType: keyboard,
+      validator: validator,
     );
   }
 
@@ -148,30 +225,156 @@ class PageAddCompteState extends State<PageAddCompte> {
   }
 
   _carte(IconData icon, Widget main) {
-    return Container(
-      padding: EdgeInsets.only(left: 8, right: 8, top: 3, bottom: 3),
-      child: Row(
-        children: [
-          _prefixeIcon(icon),
-          SizedBox(width: 10),
-          Container(
-            height: 40,
-            width: 1,
+    return Card(
+      child: Container(
+        padding: EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),
+        child: Row(
+          children: [
+            _prefixeIcon(icon),
+            SizedBox(width: 10),
+            Container(
+              height: 40,
+              width: 1,
+              color: Colors.black,
+            ),
+            SizedBox(width: 10),
+            Expanded(child: main),
+          ],
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: Offset(0, 1), // changes position of shadow
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _colorPicker() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Choisir une couleur',
+          style: TextStyle(
             color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
           ),
-          SizedBox(width: 10),
-          Expanded(child: main),
+        ),
+        content: SingleChildScrollView(
+          child: BlockPicker(
+            pickerColor: currentColor,
+            onColorChanged: changeColor,
+          ),
+          // Use Material color picker:
+          //
+          // child: MaterialPicker(
+          //   pickerColor: pickerColor,
+          //   onColorChanged: changeColor,
+          //   showLabel: true, // only on portrait mode
+          // ),
+          //
+          // Use Block color picker:
+          //
+          // child: BlockPicker(
+          //   pickerColor: currentColor,
+          //   onColorChanged: changeColor,
+          // ),
+          //
+          // child: MultipleChoiceBlockPicker(
+          //   pickerColors: currentColors,
+          //   onColorsChanged: changeColors,
+          // ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _colorPickerAdvanced();
+            },
+            child: const Text('Avancé'),
+          ),
+          TextButton(
+            child: const Text('OK!'),
+            onPressed: () {
+              setState(() => currentColor = pickerColor);
+              Navigator.of(context).pop();
+            },
+          ),
         ],
       ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: Offset(0, 1), // changes position of shadow
+    );
+  }
+
+  _colorPickerAdvanced() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          'Choisir une couleur',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: currentColor,
+            onColorChanged: changeColor,
+            colorPickerWidth: 400.0,
+            pickerAreaHeightPercent: 0.7,
+            enableAlpha: false,
+            displayThumbColor: true,
+            showLabel: false,
+            paletteType: PaletteType.hsv,
+            pickerAreaBorderRadius: const BorderRadius.only(
+              topLeft: const Radius.circular(2.0),
+              topRight: const Radius.circular(2.0),
+            ),
+          ),
+          // Use Material color picker:
+          //
+          // child: MaterialPicker(
+          //   pickerColor: pickerColor,
+          //   onColorChanged: changeColor,
+          //   showLabel: true, // only on portrait mode
+          // ),
+          //
+          // Use Block color picker:
+          //
+          // child: BlockPicker(
+          //   pickerColor: currentColor,
+          //   onColorChanged: changeColor,
+          // ),
+          //
+          // child: MultipleChoiceBlockPicker(
+          //   pickerColors: currentColors,
+          //   onColorsChanged: changeColors,
+          // ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _colorPicker();
+            },
+            child: const Text('Simple'),
+          ),
+          TextButton(
+            child: const Text('OK!'),
+            onPressed: () {
+              setState(() => currentColor = pickerColor);
+              Navigator.of(context).pop();
+            },
           ),
         ],
       ),

@@ -52,4 +52,9 @@ class Livret {
     Livret.lep(),
     Livret.pel()
   ];
+
+  @override
+  String toString() {
+    return 'Livret(name: $name, interet: $interet, plafond: $plafond, decouvert: $decouvert)';
+  }
 }
