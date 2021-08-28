@@ -18,6 +18,8 @@ class PageAddCompteState extends State<PageAddCompte> {
   Livret livretSelection = Livret.allLivrets.first;
   Color pickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
+  bool isChanged = false;
+  String lastTextSolde = "";
 
   void changeColor(Color color) {
     setState(() => pickerColor = color);
@@ -28,8 +30,25 @@ class PageAddCompteState extends State<PageAddCompte> {
     super.initState();
 
     // Start listening to changes.
-    soldeController
-        .addListener(() => print('soldeController: $soldeController'));
+    soldeController.addListener(() {
+      print('call');
+      if (soldeController.text.contains(' ') ||
+          soldeController.text.contains(',')) {
+        //enleve ' ' et ',' pour eviter les erreurs pour parser
+        String tmp = soldeController.text;
+        tmp = tmp.replaceAll(RegExp(r','), '.');
+        tmp = tmp.replaceAll(RegExp(r' '), '');
+        soldeController.text = tmp;
+        soldeController.selection = TextSelection.fromPosition(
+            TextPosition(offset: soldeController.text.length));
+      } else if ('.'.allMatches(soldeController.text).length > 1) {
+        // ex: 13..35 -> 13.35
+        soldeController.text = soldeController.text
+            .replaceRange(soldeController.text.length - 1, null, '');
+        soldeController.selection = TextSelection.fromPosition(
+            TextPosition(offset: soldeController.text.length));
+      }
+    });
   }
 
   @override
