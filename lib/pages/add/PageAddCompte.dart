@@ -16,8 +16,8 @@ class PageAddCompteState extends State<PageAddCompte> {
   final banqueController = TextEditingController();
   final soldeController = TextEditingController();
   Livret livretSelection = Livret.allLivrets.first;
-  Color pickerColor = Color(0xff443a49);
-  Color currentColor = Color(0xff443a49);
+  Color pickerColor = Color(Colors.blue.value);
+  Color currentColor = Color(Colors.blue.value);
 
   void changeColor(Color color) {
     setState(() => pickerColor = color);
