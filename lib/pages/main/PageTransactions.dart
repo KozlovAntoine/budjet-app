@@ -2,6 +2,7 @@ import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/TransactionCard.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +12,11 @@ class PageTransaction extends StatefulWidget {
 }
 
 class _PageTransactionState extends State<PageTransaction> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       drawer: SideMenu(),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -26,8 +29,7 @@ class _PageTransactionState extends State<PageTransaction> {
           ),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+      body: CustomMainPage(
         children: [
           TransactionCard(
             compte: Compte(
@@ -47,6 +49,7 @@ class _PageTransactionState extends State<PageTransaction> {
                 type: TypeTransaction.IMMEDIAT),
           )
         ],
+        scaffoldKey: _scaffoldKey,
       ),
     );
   }

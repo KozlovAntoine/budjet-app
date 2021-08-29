@@ -1,4 +1,5 @@
 import 'package:budjet_app/classes/Categorie.dart';
+import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/CategorieCard.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +10,11 @@ class PageCategories extends StatefulWidget {
 }
 
 class _PageCategoriesState extends State<PageCategories> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       drawer: SideMenu(),
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -24,8 +27,7 @@ class _PageCategoriesState extends State<PageCategories> {
           ),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+      body: CustomMainPage(
         children: [
           CategorieCard(
             categorie: Categorie(
@@ -36,6 +38,7 @@ class _PageCategoriesState extends State<PageCategories> {
             pourcentage: 60,
           )
         ],
+        scaffoldKey: _scaffoldKey,
       ),
     );
   }

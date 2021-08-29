@@ -2,6 +2,7 @@ import 'package:budjet_app/animation/snack.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Virement.dart';
+import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/VirementCard.dart';
 import 'package:flutter/material.dart';
@@ -30,32 +31,27 @@ class PageVirement extends StatelessWidget {
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: GestureDetector(
-        onHorizontalDragUpdate: (event) {
-          if (event.delta.dx > 0) _scaffoldKey.currentState!.openDrawer();
-        },
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
-          children: [
-            VirementCard(
-              virement: Virement(
-                date: DateTime.now(),
-                depuis: Compte(
-                    solde: 1234,
-                    livret: Livret.livretA(),
-                    banque: 'BNP Paribas',
-                    color: Colors.blue),
-                vers: Compte(
-                    solde: 9702,
-                    banque: 'BNP Paribas',
-                    livret: Livret.cel(),
-                    color: Colors.blue),
-                montant: 200,
-              ),
+      body: CustomMainPage(
+        children: [
+          VirementCard(
+            virement: Virement(
+              date: DateTime.now(),
+              depuis: Compte(
+                  solde: 1234,
+                  livret: Livret.livretA(),
+                  banque: 'BNP Paribas',
+                  color: Colors.blue),
+              vers: Compte(
+                  solde: 9702,
+                  banque: 'BNP Paribas',
+                  livret: Livret.cel(),
+                  color: Colors.blue),
+              montant: 200,
             ),
-            separator('Juillet', '2021'),
-          ],
-        ),
+          ),
+          separator('Juillet', '2021'),
+        ],
+        scaffoldKey: _scaffoldKey,
       ),
     );
   }

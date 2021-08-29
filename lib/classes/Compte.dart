@@ -1,5 +1,6 @@
-import 'package:budjet_app/classes/Livret.dart';
 import 'package:flutter/material.dart';
+
+import 'package:budjet_app/classes/Livret.dart';
 
 class Compte {
   final double solde;
@@ -13,4 +14,9 @@ class Compte {
     required this.banque,
     required this.color,
   });
+
+  @override
+  String toString() {
+    return 'Compte(solde: $solde, banque: $banque, livret: $livret, color: $color)';
+  }
 }

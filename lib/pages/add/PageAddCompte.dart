@@ -16,8 +16,11 @@ class PageAddCompteState extends State<PageAddCompte> {
   final banqueController = TextEditingController();
   final soldeController = TextEditingController();
   Livret livretSelection = Livret.allLivrets.first;
+
   Color pickerColor = Color(Colors.blue.value);
   Color currentColor = Color(Colors.blue.value);
+  bool isChanged = false;
+  String lastTextSolde = "";
 
   void changeColor(Color color) {
     setState(() => pickerColor = color);
@@ -28,8 +31,25 @@ class PageAddCompteState extends State<PageAddCompte> {
     super.initState();
 
     // Start listening to changes.
-    soldeController
-        .addListener(() => print('soldeController: $soldeController'));
+    soldeController.addListener(() {
+      print('call');
+      if (soldeController.text.contains(' ') ||
+          soldeController.text.contains(',')) {
+        //enleve ' ' et ',' pour eviter les erreurs pour parser
+        String tmp = soldeController.text;
+        tmp = tmp.replaceAll(RegExp(r','), '.');
+        tmp = tmp.replaceAll(RegExp(r' '), '');
+        soldeController.text = tmp;
+        soldeController.selection = TextSelection.fromPosition(
+            TextPosition(offset: soldeController.text.length));
+      } else if ('.'.allMatches(soldeController.text).length > 1) {
+        // ex: 13..35 -> 13.35
+        soldeController.text = soldeController.text
+            .replaceRange(soldeController.text.length - 1, null, '');
+        soldeController.selection = TextSelection.fromPosition(
+            TextPosition(offset: soldeController.text.length));
+      }
+    });
   }
 
   @override
@@ -146,11 +166,12 @@ class PageAddCompteState extends State<PageAddCompte> {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
                     print(soldeController.text);
-                    /*Compte compte = Compte(
-                        solde: ,
-                        livret: livret,
-                        banque: banque,
-                        color: color);*/
+                    Compte compte = Compte(
+                        solde: double.parse(soldeController.text),
+                        livret: livretSelection,
+                        banque: banqueController.text,
+                        color: currentColor);
+                    Navigator.of(context).pop(compte);
                   }
                 },
                 child: Text('Enregistrer'),
@@ -274,25 +295,6 @@ class PageAddCompteState extends State<PageAddCompte> {
             pickerColor: currentColor,
             onColorChanged: changeColor,
           ),
-          // Use Material color picker:
-          //
-          // child: MaterialPicker(
-          //   pickerColor: pickerColor,
-          //   onColorChanged: changeColor,
-          //   showLabel: true, // only on portrait mode
-          // ),
-          //
-          // Use Block color picker:
-          //
-          // child: BlockPicker(
-          //   pickerColor: currentColor,
-          //   onColorChanged: changeColor,
-          // ),
-          //
-          // child: MultipleChoiceBlockPicker(
-          //   pickerColors: currentColors,
-          //   onColorsChanged: changeColors,
-          // ),
         ),
         actions: <Widget>[
           TextButton(
@@ -341,25 +343,6 @@ class PageAddCompteState extends State<PageAddCompte> {
               topRight: const Radius.circular(2.0),
             ),
           ),
-          // Use Material color picker:
-          //
-          // child: MaterialPicker(
-          //   pickerColor: pickerColor,
-          //   onColorChanged: changeColor,
-          //   showLabel: true, // only on portrait mode
-          // ),
-          //
-          // Use Block color picker:
-          //
-          // child: BlockPicker(
-          //   pickerColor: currentColor,
-          //   onColorChanged: changeColor,
-          // ),
-          //
-          // child: MultipleChoiceBlockPicker(
-          //   pickerColors: currentColors,
-          //   onColorsChanged: changeColors,
-          // ),
         ),
         actions: <Widget>[
           TextButton(

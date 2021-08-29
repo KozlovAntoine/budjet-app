@@ -1,5 +1,6 @@
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Virement.dart';
+import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 
 class VirementCard extends StatelessWidget {
@@ -9,60 +10,39 @@ class VirementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: Container(
-        //Container that does the shadow
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.25),
-              spreadRadius: 1,
-              blurRadius: 1,
-              offset: Offset(0, 1), // changes position of shadow
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 12,
-            left: 12,
-            right: 12,
-            bottom: 5,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
+    return CustomCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          /**
+          * Informations du haut
+          */
+          _centeredText('Virement de 100.00€'),
+          _bankInfo(virement.depuis),
+          _transfertInfo(virement.depuis, -virement.montant),
+          _centeredText('Vers'),
+          /**
+          * Informations du bas
+          */
+          _bankInfo(virement.vers),
+          _transfertInfo(virement.vers, virement.montant),
+          /**
+          * Date
+          */
+          Row(
             children: [
-              _centeredText('Virement de 100.00€'),
-              _bankInfo(virement.depuis),
-              _transfertInfo(virement.depuis,
-                  -virement.montant), //replace -100 by -map['montant']
-              //ancienSolde1 -> nouveauSolde1
-              _centeredText('Vers'),
-              _bankInfo(virement.vers),
-              _transfertInfo(virement.vers,
-                  virement.montant), //ancienSolde2 -> nouveauSolde2
-              Row(
-                //crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(child: Container()),
-                  Text(
-                    'le 27/06/2021',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w200,
-                    ),
-                  ),
-                ],
-              )
+              Spacer(),
+              Text(
+                'le 27/06/2021',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w200,
+                ),
+              ),
             ],
-          ),
-        ),
+          )
+        ],
       ),
     );
   }
