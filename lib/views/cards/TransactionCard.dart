@@ -1,16 +1,13 @@
-import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionCard extends StatelessWidget {
-  final Compte compte;
   final Transaction transaction;
 
   TransactionCard({
     required this.transaction,
-    required this.compte,
   });
 
   @override
@@ -74,7 +71,7 @@ class TransactionCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: new BoxDecoration(
-                  color: compte.color,
+                  color: transaction.compte.color,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -82,8 +79,10 @@ class TransactionCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    Text(compte.livret.name, style: TextStyle(fontSize: 18)),
-                    Text(compte.banque, style: TextStyle(fontSize: 13)),
+                    Text(transaction.compte.livret.name,
+                        style: TextStyle(fontSize: 18)),
+                    Text(transaction.compte.banque,
+                        style: TextStyle(fontSize: 13)),
                   ],
                   crossAxisAlignment: CrossAxisAlignment.start,
                 ),

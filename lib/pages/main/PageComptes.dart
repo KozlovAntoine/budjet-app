@@ -36,21 +36,22 @@ class _MesComptesPageState extends State<PageCompte> {
       body: CustomMainPage(
         children: [
           ComptesCard(
-            compte: Compte(
-                solde: 1234,
-                livret: Livret.livretA(),
-                banque: 'BNP Paribas',
-                color: Colors.blue),
             transaction: Transaction(
-                categorie: Categorie(
-                    nom: 'Téléphonie',
-                    color: Colors.orange,
-                    icon: Icons.phone,
-                    plafond: 25),
-                montant: 24.99,
-                date: DateTime.now(),
-                nom: 'Orange',
-                type: TypeTransaction.IMMEDIAT),
+              categorie: Categorie(
+                  nom: 'Téléphonie',
+                  color: Colors.orange,
+                  icon: Icons.phone,
+                  plafond: 25),
+              montant: 24.99,
+              date: DateTime.now(),
+              nom: 'Orange',
+              type: TypeTransaction.IMMEDIAT,
+              compte: Compte(
+                  solde: 1234,
+                  livret: Livret.livretA(),
+                  banque: 'BNP Paribas',
+                  color: Colors.blue),
+            ),
           ),
           _addCard(),
         ],
@@ -84,11 +85,7 @@ class _MesComptesPageState extends State<PageCompte> {
       ),
       onTap: () {
         Navigator.of(context)
-            .push(
-          MaterialPageRoute(
-            builder: (context) => PageAddCompte(),
-          ),
-        )
+            .push(MaterialPageRoute(builder: (context) => PageAddCompte()))
             .then((compte) {
           Snack(context, compte.toString());
           if (compte is Compte) {}

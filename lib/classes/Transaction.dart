@@ -1,4 +1,5 @@
 import 'Categorie.dart';
+import 'Compte.dart';
 
 enum TypeTransaction { IMMEDIAT, DIFFERET, PERMANANT }
 
@@ -8,6 +9,7 @@ class Transaction {
   final Categorie categorie;
   final DateTime date;
   final TypeTransaction type;
+  final Compte compte;
 
   Transaction({
     required this.montant,
@@ -15,5 +17,6 @@ class Transaction {
     required this.categorie,
     required this.date,
     required this.type,
+    required this.compte,
   });
 }

@@ -18,7 +18,8 @@ class VirementCard extends StatelessWidget {
           /**
           * Informations du haut
           */
-          _centeredText('Virement de 100.00€'),
+          _centeredText(
+              'Virement de ' + virement.montant.toStringAsFixed(2) + '€'),
           _bankInfo(virement.depuis),
           _transfertInfo(virement.depuis, -virement.montant),
           _centeredText('Vers'),
@@ -34,7 +35,7 @@ class VirementCard extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                'le 27/06/2021',
+                'le ' + virement.date.toString(),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w200,

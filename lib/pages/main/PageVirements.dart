@@ -1,13 +1,39 @@
-import 'package:budjet_app/animation/snack.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
+import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/classes/Virement.dart';
+import 'package:budjet_app/pages/add/PageAddVirement.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/VirementCard.dart';
 import 'package:flutter/material.dart';
 
-class PageVirement extends StatelessWidget {
+class PageVirement extends StatefulWidget {
+  @override
+  _PageVirementState createState() => _PageVirementState();
+}
+
+class _PageVirementState extends State<PageVirement> {
+  List<VirementCard> cards = [
+    VirementCard(
+      virement: Virement(
+        date: DateTime.now(),
+        depuis: Compte(
+            solde: 1234,
+            livret: Livret.livretA(),
+            banque: 'BNP Paribas',
+            color: Colors.blue),
+        vers: Compte(
+            solde: 9702,
+            banque: 'BNP Paribas',
+            livret: Livret.cel(),
+            color: Colors.green),
+        montant: 200,
+        type: TypeTransaction.IMMEDIAT,
+      ),
+    ),
+  ];
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -27,30 +53,19 @@ class PageVirement extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Snack(context, 'Ajout');
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => PageAddVirement()))
+              .then((value) {
+            if (value != null) {
+              cards.add(VirementCard(virement: value));
+              setState(() {});
+            }
+          });
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
       body: CustomMainPage(
-        children: [
-          VirementCard(
-            virement: Virement(
-              date: DateTime.now(),
-              depuis: Compte(
-                  solde: 1234,
-                  livret: Livret.livretA(),
-                  banque: 'BNP Paribas',
-                  color: Colors.blue),
-              vers: Compte(
-                  solde: 9702,
-                  banque: 'BNP Paribas',
-                  livret: Livret.cel(),
-                  color: Colors.blue),
-              montant: 200,
-            ),
-          ),
-          separator('Juillet', '2021'),
-        ],
+        children: cards,
         scaffoldKey: _scaffoldKey,
       ),
     );

@@ -2,6 +2,7 @@ import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/pages/add/PageAddTransaction.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/TransactionCard.dart';
@@ -29,24 +30,36 @@ class _PageTransactionState extends State<PageTransaction> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context)
+              .push(
+                  MaterialPageRoute(builder: (context) => PageAddTransaction()))
+              .then((value) {
+            if (value != null) {}
+          });
+        },
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: CustomMainPage(
         children: [
           TransactionCard(
-            compte: Compte(
-                solde: 1234,
-                livret: Livret.livretA(),
-                banque: 'BNP Paribas',
-                color: Colors.blue),
             transaction: Transaction(
-                categorie: Categorie(
-                    nom: 'Téléphonie',
-                    color: Colors.orange,
-                    icon: Icons.phone,
-                    plafond: 25),
-                montant: 24.99,
-                date: DateTime.now(),
-                nom: 'Orange',
-                type: TypeTransaction.IMMEDIAT),
+              categorie: Categorie(
+                  nom: 'Téléphonie',
+                  color: Colors.orange,
+                  icon: Icons.phone,
+                  plafond: 25),
+              montant: 24.99,
+              date: DateTime.now(),
+              nom: 'Orange',
+              type: TypeTransaction.IMMEDIAT,
+              compte: Compte(
+                  solde: 1234,
+                  livret: Livret.livretA(),
+                  banque: 'BNP Paribas',
+                  color: Colors.blue),
+            ),
           )
         ],
         scaffoldKey: _scaffoldKey,

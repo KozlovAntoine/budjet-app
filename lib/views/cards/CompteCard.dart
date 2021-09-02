@@ -1,13 +1,11 @@
-import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ComptesCard extends StatelessWidget {
-  final Compte compte;
   final Transaction transaction;
-  ComptesCard({required this.compte, required this.transaction});
+  ComptesCard({required this.transaction});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +21,7 @@ class ComptesCard extends StatelessWidget {
                 width: 70,
                 height: 70,
                 decoration: new BoxDecoration(
-                  color: compte.color,
+                  color: transaction.compte.color,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -33,7 +31,7 @@ class ComptesCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    compte.solde.toStringAsFixed(2) + '€',
+                    transaction.compte.solde.toStringAsFixed(2) + '€',
                     style: TextStyle(
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w700,
@@ -41,12 +39,12 @@ class ComptesCard extends StatelessWidget {
                   ),
                   SizedBox(height: 3),
                   Text(
-                    compte.livret.name,
+                    transaction.compte.livret.name,
                     style: TextStyle(fontSize: 20),
                   ),
                   SizedBox(height: 3),
                   Text(
-                    compte.banque,
+                    transaction.compte.banque,
                     style: TextStyle(fontSize: 18, color: Colors.black54),
                   ),
                 ],
