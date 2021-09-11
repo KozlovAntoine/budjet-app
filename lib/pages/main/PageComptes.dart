@@ -1,4 +1,3 @@
-import 'package:budjet_app/animation/snack.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
@@ -7,7 +6,6 @@ import 'package:budjet_app/pages/add/PageAddCompte.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/CompteCard.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
 class PageCompte extends StatefulWidget {
@@ -33,6 +31,16 @@ class _MesComptesPageState extends State<PageCompte> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => PageAddCompte()))
+              .then((value) {
+            if (value != null) {}
+          });
+        },
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: CustomMainPage(
         children: [
           ComptesCard(
@@ -50,17 +58,17 @@ class _MesComptesPageState extends State<PageCompte> {
                   solde: 1234,
                   livret: Livret.livretA(),
                   banque: 'BNP Paribas',
-                  color: Colors.blue),
+                  color: Colors.blue,
+                  lastModification: DateTime.now()),
             ),
           ),
-          _addCard(),
         ],
         scaffoldKey: _scaffoldKey,
       ),
     );
   }
 
-  _addCard() {
+  /*_addCard() {
     return InkWell(
       child: Card(
         color: Colors.transparent,
@@ -92,5 +100,5 @@ class _MesComptesPageState extends State<PageCompte> {
         });
       },
     );
-  }
+  }*/
 }

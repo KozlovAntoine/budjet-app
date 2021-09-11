@@ -27,18 +27,20 @@ class _PageAddVirementState extends State<PageAddVirement> {
           solde: 541.41,
           livret: Livret.cel(),
           banque: 'Caisse',
-          color: Colors.yellow),
+          color: Colors.yellow,
+          lastModification: DateTime.now()),
       Compte(
           solde: 612.35,
           livret: Livret.pel(),
           banque: 'BNP',
-          color: Colors.green),
+          color: Colors.green,
+          lastModification: DateTime.now()),
       Compte(
-        solde: 812.51,
-        livret: Livret.livretA(),
-        banque: 'Boursorama',
-        color: Colors.red,
-      )
+          solde: 812.51,
+          livret: Livret.livretA(),
+          banque: 'Boursorama',
+          color: Colors.red,
+          lastModification: DateTime.now())
     ]);
     expediteur = comptes.first;
     receveur = comptes.last;

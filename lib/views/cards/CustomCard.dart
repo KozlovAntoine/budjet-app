@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 
 class CustomCard extends StatelessWidget {
   final Widget child;
-  CustomCard({required this.child});
+  final Function onTap;
+  final Function modify;
+  final Function delete;
+  CustomCard({
+    required this.child,
+    required this.onTap,
+    required this.modify,
+    required this.delete,
+  });
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -30,7 +38,41 @@ class CustomCard extends StatelessWidget {
             right: 12,
             bottom: 5,
           ),
-          child: child,
+          child: Material(
+            child: InkWell(
+              child: child,
+              onLongPress: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ListTile(
+                            leading: new Icon(Icons.edit),
+                            title: new Text('Modifier'),
+                            onTap: () {
+                              modify();
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            leading: new Icon(Icons.delete),
+                            title: new Text('Supprimer'),
+                            onTap: () {
+                              delete();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+              onTap: () {
+                onTap();
+              },
+            ),
+          ),
         ),
       ),
     );

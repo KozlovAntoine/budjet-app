@@ -13,6 +13,15 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
+      onTap: () {
+        print('lala');
+      },
+      modify: () {
+        print('modify this $transaction');
+      },
+      delete: () {
+        print('delete this $transaction');
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

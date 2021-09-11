@@ -58,7 +58,8 @@ class _PageTransactionState extends State<PageTransaction> {
                   solde: 1234,
                   livret: Livret.livretA(),
                   banque: 'BNP Paribas',
-                  color: Colors.blue),
+                  color: Colors.blue,
+                  lastModification: DateTime.now()),
             ),
           )
         ],

@@ -19,4 +19,9 @@ class Transaction {
     required this.type,
     required this.compte,
   });
+
+  @override
+  String toString() {
+    return 'Transaction(montant: $montant, nom: $nom, categorie: $categorie, date: $date, type: $type, compte: $compte)';
+  }
 }

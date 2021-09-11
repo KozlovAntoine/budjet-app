@@ -146,7 +146,8 @@ class PageAddCompteState extends State<PageAddCompte> {
                         solde: double.parse(soldeController.text),
                         livret: livretSelection,
                         banque: banqueController.text,
-                        color: currentColor);
+                        color: currentColor,
+                        lastModification: DateTime.now());
                     Navigator.of(context).pop(compte);
                   }
                 },

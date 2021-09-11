@@ -10,6 +10,15 @@ class CategorieCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
+      onTap: () {
+        print('lala');
+      },
+      modify: () {
+        print('modify this $categorie');
+      },
+      delete: () {
+        print('delete this $categorie');
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -57,13 +66,40 @@ class CategorieCard extends StatelessWidget {
               Spacer(),
             ],
           ),
-          Container(
-            height: 2.0,
-            width: MediaQuery.of(context).size.width * 0.54,
-            color: Colors.green,
-          ),
+          SizedBox(height: 5),
+          _progressBar(),
         ],
       ),
     );
+  }
+
+  _progressBar() {
+    if (pourcentage <= 100) {
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            flex: pourcentage.toInt(),
+            child: Container(
+              height: 4.0,
+              color: Color.fromRGBO(pourcentage > 70 ? 255 : 0,
+                  255 - (255 * (pourcentage / 100)).toInt(), 0, 1),
+            ),
+          ),
+          Expanded(
+            flex: 100 - pourcentage.toInt(),
+            child: Container(
+              height: 4.0,
+              color: Colors.grey[300],
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Container(
+        height: 4.0,
+        color: Colors.red,
+      );
+    }
   }
 }

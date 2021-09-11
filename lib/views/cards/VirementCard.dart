@@ -2,6 +2,7 @@ import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Virement.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class VirementCard extends StatelessWidget {
   final Virement virement;
@@ -11,6 +12,15 @@ class VirementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
+      onTap: () {
+        print('lala');
+      },
+      modify: () {
+        print('modify this ${virement.toString()}');
+      },
+      delete: () {
+        print('delete this ${virement.toString()}');
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -35,7 +45,7 @@ class VirementCard extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                'le ' + virement.date.toString(),
+                'le ' + DateFormat('dd-MM-yyyy').format(virement.date),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w200,
@@ -115,7 +125,7 @@ class VirementCard extends StatelessWidget {
       child: Text(
         txt,
         style: TextStyle(
-          fontSize: 22,
+          fontSize: 24,
           fontWeight: FontWeight.w700,
         ),
       ),
