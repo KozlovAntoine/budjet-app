@@ -53,6 +53,10 @@ class Livret {
     Livret.pel()
   ];
 
+  static Livret stringToLivret(String name) {
+    return allLivrets.firstWhere((element) => element.name == name);
+  }
+
   @override
   String toString() {
     return 'Livret(name: $name, interet: $interet, plafond: $plafond, decouvert: $decouvert)';

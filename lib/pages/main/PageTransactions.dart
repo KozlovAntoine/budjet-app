@@ -55,6 +55,7 @@ class _PageTransactionState extends State<PageTransaction> {
               nom: 'Orange',
               type: TypeTransaction.IMMEDIAT,
               compte: Compte(
+                  id: 998,
                   solde: 1234,
                   livret: Livret.livretA(),
                   banque: 'BNP Paribas',

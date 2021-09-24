@@ -12,10 +12,7 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
   final _formKey = GlobalKey<FormState>();
   final name = TextEditingController();
   final plafond = TextEditingController();
-  Icon _icon = Icon(
-    Icons.phone,
-    size: 40,
-  );
+  IconData _icon = Icons.phone;
 
   Color currentColor = Color(Colors.blue.value);
 
@@ -117,7 +114,8 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
                               style: TextStyle(
                                   fontFamily: 'Roboto', fontSize: 20)),
                           Spacer(),
-                          _icon,
+                          Icon(_icon, size: 30),
+                          SizedBox(width: 5),
                         ],
                       ),
                     ),
@@ -131,7 +129,7 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
                         nom: name.text,
                         plafond: double.parse(plafond.text),
                         color: currentColor,
-                        icon: _icon.icon);
+                        icon: _icon);
                     Navigator.of(context).pop(categorie);
                   }
                 },
@@ -145,13 +143,12 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
   }
 
   _pickIcon() async {
-    IconData icon = await FlutterIconPicker.showIconPicker(context,
+    IconData? icon = await FlutterIconPicker.showIconPicker(context,
         iconPackMode: IconPack.material);
-    _icon = Icon(
-      icon,
-      size: 40,
-    );
-    setState(() {});
+    if (icon != null) {
+      _icon = icon;
+      setState(() {});
+    }
 
     debugPrint('Picked Icon:  $icon');
   }

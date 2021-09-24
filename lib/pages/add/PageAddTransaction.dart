@@ -24,18 +24,21 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
     super.initState();
     comptes.addAll([
       Compte(
+          id: 994,
           solde: 541.41,
           livret: Livret.cel(),
           banque: 'Caisse',
           color: Colors.yellow,
           lastModification: DateTime.now()),
       Compte(
+          id: 995,
           solde: 612.35,
           livret: Livret.pel(),
           banque: 'BNP',
           color: Colors.green,
           lastModification: DateTime.now()),
       Compte(
+          id: 996,
           solde: 812.51,
           livret: Livret.livretA(),
           banque: 'Boursorama',

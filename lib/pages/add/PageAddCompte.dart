@@ -142,13 +142,13 @@ class PageAddCompteState extends State<PageAddCompte> {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
                     print(soldeController.text);
-                    Compte compte = Compte(
+                    /*Compte compte = Compte(
                         solde: double.parse(soldeController.text),
                         livret: livretSelection,
                         banque: banqueController.text,
                         color: currentColor,
                         lastModification: DateTime.now());
-                    Navigator.of(context).pop(compte);
+                    Navigator.of(context).pop(compte);*/
                   }
                 },
                 child: Text('Enregistrer'),

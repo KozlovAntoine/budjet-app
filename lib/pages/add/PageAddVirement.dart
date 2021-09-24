@@ -1,4 +1,3 @@
-import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
@@ -24,18 +23,21 @@ class _PageAddVirementState extends State<PageAddVirement> {
     super.initState();
     comptes.addAll([
       Compte(
+          id: 990,
           solde: 541.41,
           livret: Livret.cel(),
           banque: 'Caisse',
           color: Colors.yellow,
           lastModification: DateTime.now()),
       Compte(
+          id: 991,
           solde: 612.35,
           livret: Livret.pel(),
           banque: 'BNP',
           color: Colors.green,
           lastModification: DateTime.now()),
       Compte(
+          id: 992,
           solde: 812.51,
           livret: Livret.livretA(),
           banque: 'Boursorama',

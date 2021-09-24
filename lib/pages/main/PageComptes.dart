@@ -2,6 +2,8 @@ import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/data/CompteDAO.dart';
+import 'package:budjet_app/data/database_bud.dart';
 import 'package:budjet_app/pages/add/PageAddCompte.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
@@ -15,8 +17,10 @@ class PageCompte extends StatefulWidget {
 
 class _MesComptesPageState extends State<PageCompte> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  late DatabaseBud databaseBud;
   @override
   Widget build(BuildContext context) {
+    initDatabase();
     return Scaffold(
       key: _scaffoldKey,
       drawer: SideMenu(),
@@ -55,6 +59,7 @@ class _MesComptesPageState extends State<PageCompte> {
               nom: 'Orange',
               type: TypeTransaction.IMMEDIAT,
               compte: Compte(
+                  id: 997,
                   solde: 1234,
                   livret: Livret.livretA(),
                   banque: 'BNP Paribas',
@@ -66,6 +71,20 @@ class _MesComptesPageState extends State<PageCompte> {
         scaffoldKey: _scaffoldKey,
       ),
     );
+  }
+
+  initDatabase() async {
+    databaseBud = new DatabaseBud();
+    await databaseBud.initDone;
+    databaseBud.insertCompte(CompteDAO(
+        idcpt: 1,
+        solde: 2,
+        nom: 'Caisse epargne',
+        livret: 'Livret A',
+        color: Colors.blue.value,
+        lastModification: DateTime.now().toString()));
+    List<Compte> comptes = await databaseBud.comptes();
+    print(comptes[0]);
   }
 
   /*_addCard() {
