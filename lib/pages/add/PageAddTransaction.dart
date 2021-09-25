@@ -131,7 +131,7 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
               TextButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Transaction transaction = Transaction(
+                    TransactionBud transaction = TransactionBud(
                         montant: double.parse(montant.text),
                         nom: name.text,
                         categorie: categorieSelection,

@@ -44,7 +44,7 @@ class _PageTransactionState extends State<PageTransaction> {
       body: CustomMainPage(
         children: [
           TransactionCard(
-            transaction: Transaction(
+            transaction: TransactionBud(
               categorie: Categorie(
                   nom: 'Téléphonie',
                   color: Colors.orange,

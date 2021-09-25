@@ -1,6 +1,8 @@
 import 'package:budjet_app/animation/ColorPick.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
+import 'package:budjet_app/data/CompteDAO.dart';
+import 'package:budjet_app/data/database_bud.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 
@@ -142,13 +144,14 @@ class PageAddCompteState extends State<PageAddCompte> {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
                     print(soldeController.text);
-                    /*Compte compte = Compte(
+                    CompteDAO dao = CompteDAO(
+                        idcpt: 0,
                         solde: double.parse(soldeController.text),
-                        livret: livretSelection,
-                        banque: banqueController.text,
-                        color: currentColor,
-                        lastModification: DateTime.now());
-                    Navigator.of(context).pop(compte);*/
+                        nom: banqueController.text,
+                        livret: livretSelection.name,
+                        color: currentColor.value,
+                        lastModification: DateTime.now().toString());
+                    Navigator.of(context).pop(dao);
                   }
                 },
                 child: Text('Enregistrer'),

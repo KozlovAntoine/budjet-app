@@ -24,4 +24,14 @@ class CompteDAO {
       'lastModification': lastModification
     };
   }
+
+  Map<String, dynamic> toMapInsert() {
+    return {
+      'solde': solde,
+      'nom': nom,
+      'livret': livret,
+      'color': color,
+      'lastModification': lastModification
+    };
+  }
 }

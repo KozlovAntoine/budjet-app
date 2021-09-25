@@ -1,11 +1,13 @@
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/data/database_bud.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ComptesCard extends StatelessWidget {
-  final Transaction transaction;
-  ComptesCard({required this.transaction});
+  final TransactionBud transaction;
+  final Function refresh;
+  ComptesCard({required this.transaction, required this.refresh});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,11 @@ class ComptesCard extends StatelessWidget {
       modify: () {
         print('modify this ${transaction.toString()}');
       },
-      delete: () {
+      delete: () async {
+        final databaseBud = DatabaseBud();
+        await databaseBud.initDone;
+        await databaseBud.deleteCompte(transaction.compte.id);
+        refresh();
         print('delete this ${transaction.toString()}');
       },
       child: Material(
@@ -69,53 +75,54 @@ class ComptesCard extends StatelessWidget {
                 height: 2.0,
               ),
               SizedBox(height: 5),
-              Row(
-                //the bottom of the card
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: new BoxDecoration(
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      transaction.categorie.icon,
-                      size: 24,
-                    ),
-                  ),
-                  SizedBox(width: 5),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(transaction.categorie.nom.toString(),
-                            style: TextStyle(fontSize: 18)),
-                        Text(
-                            "le " +
-                                DateFormat('dd-MM-yyyy')
-                                    .format(transaction.date),
-                            style: TextStyle(fontSize: 13)),
-                      ],
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                    ),
-                  ),
-                  Text(
-                    transaction.montant.toStringAsFixed(2) + '€',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: transaction.montant > 0
-                            ? Colors.green
-                            : Colors.red),
-                  ),
-                ],
-              ),
+              //BOTTOM OF THE CARD
             ],
           ),
         ),
       ),
     );
+  }
+
+  bottom() {
+    if (transaction.) {
+      return Row(
+        //the bottom of the card
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: new BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 1,
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              transaction.categorie!.icon,
+              size: 24,
+            ),
+          ),
+          SizedBox(width: 5),
+          Expanded(
+            child: Column(
+              children: [
+                Text(transaction.categorie!.nom.toString(),
+                    style: TextStyle(fontSize: 18)),
+                Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date!),
+                    style: TextStyle(fontSize: 13)),
+              ],
+              crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+          ),
+          Text(
+            transaction.montant!.toStringAsFixed(2) + '€',
+            style: TextStyle(
+                fontSize: 18,
+                color: transaction.montant! > 0 ? Colors.green : Colors.red),
+          ),
+        ],
+      );
+    }
   }
 }

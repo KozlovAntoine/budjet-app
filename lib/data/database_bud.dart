@@ -17,15 +17,18 @@ class DatabaseBud {
   final String _dateDb = 'date TEXT,';
   final String _dateFinDb = 'dateFin TEXT,';
   final String _typeDb = 'type TEXT,';
-  late Future<Database> _database;
+  static late Future<Database> _database;
+
+  DatabaseBud._privateConstructor();
+  static final DatabaseBud instance = DatabaseBud._privateConstructor();
 
   DatabaseBud() {
-    init();
+    _database = _initDatabase();
   }
 
-  init() async {
+  Future<Database> _initDatabase() async {
     WidgetsFlutterBinding.ensureInitialized();
-    _database = openDatabase(
+    return await openDatabase(
       join(await getDatabasesPath(), 'mydb.db'),
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
@@ -94,9 +97,9 @@ class DatabaseBud {
 
   Future<Database> get initDone => _database;
 
-  Future<void> insertCompte(CompteDAO compteDAO) async {
+  Future<int> insertCompte(CompteDAO compteDAO) async {
     final db = await _database;
-    await db.insert(_compte, compteDAO.toMap());
+    return await db.insert(_compte, compteDAO.toMapInsert());
   }
 
   Future<List<Compte>> comptes() async {
@@ -111,5 +114,10 @@ class DatabaseBud {
           color: maps[i]['color'],
           lastModification: maps[i]['lastModification']));
     });
+  }
+
+  Future<void> deleteCompte(int id) async {
+    final db = await _database;
+    await db.delete(_compte, where: 'idcpt = ?', whereArgs: [id]);
   }
 }
