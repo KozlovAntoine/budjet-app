@@ -1,4 +1,5 @@
 import 'package:budjet_app/classes/Categorie.dart';
+import 'package:budjet_app/data/database_bud.dart';
 import 'package:budjet_app/pages/add/PageAddCategorie.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
@@ -12,11 +13,19 @@ class PageCategories extends StatefulWidget {
 
 class _PageCategoriesState extends State<PageCategories> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  late DatabaseBud databaseBud;
+  List<Widget> widgets = [];
 
   @override
   void initState() {
     super.initState();
-    print('init state');
+    initDatabase();
+  }
+
+  initDatabase() async {
+    databaseBud = DatabaseBud();
+    await databaseBud.initDone;
+    await refresh();
   }
 
   @override
@@ -40,38 +49,32 @@ class _PageCategoriesState extends State<PageCategories> {
         onPressed: () {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => PageAddCategorie()))
-              .then((value) {
-            if (value != null) {}
+              .then((value) async {
+            if (value != null) {
+              await databaseBud.insertCategorie(value);
+              refresh();
+            }
           });
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
       body: CustomMainPage(
-        children: [
-          CategorieCard(
-              categorie: Categorie(
-                  color: Colors.green,
-                  icon: Icons.phone,
-                  nom: "Téléphonie",
-                  plafond: 20),
-              pourcentage: 100),
-          CategorieCard(
-              categorie: Categorie(
-                  color: Colors.blue,
-                  icon: Icons.account_balance,
-                  nom: "Courses",
-                  plafond: 300),
-              pourcentage: 75),
-          CategorieCard(
-              categorie: Categorie(
-                  color: Colors.red,
-                  icon: Icons.air,
-                  nom: "Voyage",
-                  plafond: 500),
-              pourcentage: 20),
-        ],
+        children: widgets,
         scaffoldKey: _scaffoldKey,
       ),
     );
+  }
+
+  refresh() async {
+    widgets = [];
+    List<Categorie> categories = await databaseBud.getAllCategories();
+    categories.forEach((element) {
+      widgets.add(CategorieCard(categorie: element, pourcentage: 1));
+    });
+    print('dddddd');
+    print(categories);
+    setState(() {
+      print('setState');
+    });
   }
 }

@@ -1,3 +1,4 @@
+import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:flutter/material.dart';
 
 class Categorie {
@@ -16,5 +17,13 @@ class Categorie {
   @override
   String toString() {
     return 'Categorie(nom: $nom, plafond: $plafond, color: $color, icon: ${icon.toString()})';
+  }
+
+  static Categorie fromDAO(CategorieDAO dao) {
+    return Categorie(
+        nom: dao.nom,
+        plafond: dao.plafond,
+        color: Color(dao.color),
+        icon: IconData(dao.icon, fontFamily: 'MaterialIcons'));
   }
 }

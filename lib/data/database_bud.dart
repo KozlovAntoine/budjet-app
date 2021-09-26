@@ -1,4 +1,6 @@
+import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
+import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
@@ -102,7 +104,7 @@ class DatabaseBud {
     return await db.insert(_compte, compteDAO.toMapInsert());
   }
 
-  Future<List<Compte>> comptes() async {
+  Future<List<Compte>> getAllComptes() async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.query(_compte);
     return List.generate(maps.length, (i) {
@@ -119,5 +121,24 @@ class DatabaseBud {
   Future<void> deleteCompte(int id) async {
     final db = await _database;
     await db.delete(_compte, where: 'idcpt = ?', whereArgs: [id]);
+  }
+
+  Future<int> insertCategorie(CategorieDAO dao) async {
+    final db = await _database;
+    return await db.insert(_categorie, dao.toMapInsert());
+  }
+
+  Future<List<Categorie>> getAllCategories() async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.query(_categorie);
+    return List.generate(maps.length, (i) {
+      return Categorie.fromDAO(CategorieDAO(
+        idcat: maps[i]['idcat'],
+        color: maps[i]['color'],
+        icon: maps[i]['icon'],
+        nom: maps[i]['nom'],
+        plafond: maps[i]['plafond'],
+      ));
+    });
   }
 }

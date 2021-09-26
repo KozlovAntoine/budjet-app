@@ -12,6 +12,7 @@ class CategorieCard extends StatelessWidget {
     return CustomCard(
       onTap: () {
         print('lala');
+        print('Categorie card: $categorie');
       },
       modify: () {
         print('modify this $categorie');

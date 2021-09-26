@@ -1,5 +1,6 @@
 import 'package:budjet_app/animation/ColorPick.dart';
 import 'package:budjet_app/classes/Categorie.dart';
+import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
@@ -125,12 +126,13 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
               TextButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Categorie categorie = Categorie(
+                    CategorieDAO dao = CategorieDAO(
+                        idcat: null,
                         nom: name.text,
                         plafond: double.parse(plafond.text),
-                        color: currentColor,
-                        icon: _icon);
-                    Navigator.of(context).pop(categorie);
+                        color: currentColor.value,
+                        icon: _icon.codePoint);
+                    Navigator.of(context).pop(dao);
                   }
                 },
                 child: Text('Enregistrer'),

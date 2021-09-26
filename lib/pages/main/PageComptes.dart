@@ -1,4 +1,3 @@
-import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
@@ -24,20 +23,21 @@ class _MesComptesPageState extends State<PageCompte> {
     super.initState();
     initDatabase();
     widgets.add(ComptesCard(
+        delete: delete,
         transaction: TransactionBud(
-      categorie: null,
-      montant: 24.99,
-      date: DateTime.now(),
-      nom: 'Orange',
-      type: TypeTransaction.IMMEDIAT,
-      compte: Compte(
-          id: 997,
-          solde: 1234,
-          livret: Livret.livretA(),
-          banque: 'BNP Paribas',
-          color: Colors.blue,
-          lastModification: DateTime.now()),
-    )));
+          categorie: null,
+          montant: 24.99,
+          date: DateTime.now(),
+          nom: 'Orange',
+          type: TypeTransaction.IMMEDIAT,
+          compte: Compte(
+              id: 997,
+              solde: 1234,
+              livret: Livret.livretA(),
+              banque: 'BNP Paribas',
+              color: Colors.blue,
+              lastModification: DateTime.now()),
+        )));
   }
 
   @override
@@ -84,14 +84,23 @@ class _MesComptesPageState extends State<PageCompte> {
 
   refresh() async {
     widgets = [];
-    List<Compte> comptes = await databaseBud.comptes();
+    List<Compte> comptes = await databaseBud.getAllComptes();
     comptes.forEach((element) {
-      widgets.add(ComptesCard(transaction: TransactionBud(compte: element)));
+      widgets.add(ComptesCard(
+          delete: delete,
+          transaction: TransactionBud(
+            compte: element,
+          )));
     });
     print('dddddd');
     print(comptes);
     setState(() {
       print('setState');
     });
+  }
+
+  void delete(int id) async {
+    await databaseBud.deleteCompte(id);
+    await refresh();
   }
 }

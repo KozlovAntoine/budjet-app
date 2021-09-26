@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 
 class ComptesCard extends StatelessWidget {
   final TransactionBud transaction;
-  //final Function refresh;
-  ComptesCard({required this.transaction});
+  final Function delete;
+  ComptesCard({required this.transaction, required this.delete});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +18,7 @@ class ComptesCard extends StatelessWidget {
         print('modify this ${transaction.toString()}');
       },
       delete: () {
+        delete(transaction.compte.id);
         print('delete this ${transaction.toString()}');
       },
       child: Material(
@@ -71,6 +72,7 @@ class ComptesCard extends StatelessWidget {
               ),
               SizedBox(height: 5),
               //BOTTOM OF THE CARD
+              bottom(),
             ],
           ),
         ),
@@ -79,7 +81,7 @@ class ComptesCard extends StatelessWidget {
   }
 
   bottom() {
-    if (transaction.montant != null) {
+    if (transaction.montant != null && transaction.categorie != null) {
       return Row(
         //the bottom of the card
         children: [
