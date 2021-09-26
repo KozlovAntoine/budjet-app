@@ -1,13 +1,12 @@
 import 'package:budjet_app/classes/Transaction.dart';
-import 'package:budjet_app/data/database_bud.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ComptesCard extends StatelessWidget {
   final TransactionBud transaction;
-  final Function refresh;
-  ComptesCard({required this.transaction, required this.refresh});
+  //final Function refresh;
+  ComptesCard({required this.transaction});
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +17,7 @@ class ComptesCard extends StatelessWidget {
       modify: () {
         print('modify this ${transaction.toString()}');
       },
-      delete: () async {
-        final databaseBud = DatabaseBud();
-        await databaseBud.initDone;
-        await databaseBud.deleteCompte(transaction.compte.id);
-        refresh();
+      delete: () {
         print('delete this ${transaction.toString()}');
       },
       child: Material(
@@ -84,7 +79,7 @@ class ComptesCard extends StatelessWidget {
   }
 
   bottom() {
-    if (transaction.) {
+    if (transaction.montant != null) {
       return Row(
         //the bottom of the card
         children: [
@@ -123,6 +118,8 @@ class ComptesCard extends StatelessWidget {
           ),
         ],
       );
+    } else {
+      return Text("Aucune transaction");
     }
   }
 }

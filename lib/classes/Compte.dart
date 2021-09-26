@@ -1,4 +1,4 @@
-import 'package:budjet_app/data/CompteDAO.dart';
+import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:flutter/material.dart';
 
 import 'package:budjet_app/classes/Livret.dart';

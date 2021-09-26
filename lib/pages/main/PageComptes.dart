@@ -24,21 +24,20 @@ class _MesComptesPageState extends State<PageCompte> {
     super.initState();
     initDatabase();
     widgets.add(ComptesCard(
-        refresh: refresh,
         transaction: TransactionBud(
-          categorie: null,
-          montant: 24.99,
-          date: DateTime.now(),
-          nom: 'Orange',
-          type: TypeTransaction.IMMEDIAT,
-          compte: Compte(
-              id: 997,
-              solde: 1234,
-              livret: Livret.livretA(),
-              banque: 'BNP Paribas',
-              color: Colors.blue,
-              lastModification: DateTime.now()),
-        )));
+      categorie: null,
+      montant: 24.99,
+      date: DateTime.now(),
+      nom: 'Orange',
+      type: TypeTransaction.IMMEDIAT,
+      compte: Compte(
+          id: 997,
+          solde: 1234,
+          livret: Livret.livretA(),
+          banque: 'BNP Paribas',
+          color: Colors.blue,
+          lastModification: DateTime.now()),
+    )));
   }
 
   @override
@@ -87,22 +86,12 @@ class _MesComptesPageState extends State<PageCompte> {
     widgets = [];
     List<Compte> comptes = await databaseBud.comptes();
     comptes.forEach((element) {
-      widgets.add(ComptesCard(
-          refresh: refresh,
-          transaction: TransactionBud(
-              categorie: Categorie(
-                  nom: 'Téléphonie',
-                  color: Colors.orange,
-                  icon: Icons.phone,
-                  plafond: 25),
-              montant: 24.99,
-              date: DateTime.now(),
-              nom: 'Orange',
-              type: TypeTransaction.IMMEDIAT,
-              compte: element)));
+      widgets.add(ComptesCard(transaction: TransactionBud(compte: element)));
     });
     print('dddddd');
     print(comptes);
-    setState(() {});
+    setState(() {
+      print('setState');
+    });
   }
 }

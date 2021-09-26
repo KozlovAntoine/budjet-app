@@ -1,5 +1,5 @@
 import 'package:budjet_app/classes/Compte.dart';
-import 'package:budjet_app/data/CompteDAO.dart';
+import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';

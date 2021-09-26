@@ -1,8 +1,6 @@
 import 'package:budjet_app/animation/ColorPick.dart';
-import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
-import 'package:budjet_app/data/CompteDAO.dart';
-import 'package:budjet_app/data/database_bud.dart';
+import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 
