@@ -33,11 +33,11 @@ class TransactionCard extends StatelessWidget {
                 width: 70,
                 height: 70,
                 decoration: new BoxDecoration(
-                  color: transaction.categorie!.color,
+                  color: transaction.categorie.color,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  transaction.categorie!.icon,
+                  transaction.categorie.icon,
                   size: 40,
                 ),
               ),
@@ -47,7 +47,7 @@ class TransactionCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    transaction.montant!.toStringAsFixed(2) + '€',
+                    transaction.montant.toStringAsFixed(2) + '€',
                     style: TextStyle(
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w700,
@@ -60,7 +60,7 @@ class TransactionCard extends StatelessWidget {
                   ),
                   SizedBox(height: 3),
                   Text(
-                    transaction.categorie!.nom.toString(),
+                    transaction.categorie.nom.toString(),
                     style: TextStyle(fontSize: 18, color: Colors.black54),
                   ),
                 ],
@@ -96,7 +96,7 @@ class TransactionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                 ),
               ),
-              Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date!),
+              Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date),
                   style: TextStyle(fontSize: 13)),
             ],
           ),

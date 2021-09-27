@@ -1,6 +1,5 @@
 import 'package:budjet_app/animation/ColorPick.dart';
 import 'package:budjet_app/classes/Categorie.dart';
-import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';

@@ -1,6 +1,5 @@
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/data/dao/CategorieDAO.dart';
-import 'package:budjet_app/data/database_bud.dart';
 import 'package:budjet_app/pages/add/PageAddCategorie.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';

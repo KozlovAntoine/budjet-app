@@ -1,7 +1,6 @@
 import 'package:budjet_app/classes/ToDb.dart';
 import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
-import 'package:budjet_app/data/database_bud.dart';
 
 import 'Categorie.dart';
 import 'Compte.dart';

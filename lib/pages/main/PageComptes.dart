@@ -1,6 +1,5 @@
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
-import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/pages/add/PageAddCompte.dart';

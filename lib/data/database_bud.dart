@@ -24,10 +24,6 @@ class DatabaseBud {
     _database = _initDatabase();
   }
 
-  DatabaseBud._() {
-    _database = _initDatabase();
-  }
-
   Future<Database> get database async {
     return _database;
   }

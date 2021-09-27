@@ -96,7 +96,7 @@ class ComptesCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              transaction.categorie!.icon,
+              transaction.categorie.icon,
               size: 24,
             ),
           ),
@@ -104,19 +104,19 @@ class ComptesCard extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Text(transaction.categorie!.nom.toString(),
+                Text(transaction.categorie.nom.toString(),
                     style: TextStyle(fontSize: 18)),
-                Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date!),
+                Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date),
                     style: TextStyle(fontSize: 13)),
               ],
               crossAxisAlignment: CrossAxisAlignment.start,
             ),
           ),
           Text(
-            transaction.montant!.toStringAsFixed(2) + '€',
+            transaction.montant.toStringAsFixed(2) + '€',
             style: TextStyle(
                 fontSize: 18,
-                color: transaction.montant! > 0 ? Colors.green : Colors.red),
+                color: transaction.montant > 0 ? Colors.green : Colors.red),
           ),
         ],
       );
