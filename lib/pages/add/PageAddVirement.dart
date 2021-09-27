@@ -6,6 +6,8 @@ import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 
 class PageAddVirement extends StatefulWidget {
+  final List<Compte> comptes;
+  PageAddVirement({required this.comptes});
   @override
   _PageAddVirementState createState() => _PageAddVirementState();
 }
@@ -13,7 +15,6 @@ class PageAddVirement extends StatefulWidget {
 class _PageAddVirementState extends State<PageAddVirement> {
   final _formKey = GlobalKey<FormState>();
   final montant = TextEditingController();
-  List<Compte> comptes = [];
   late Compte expediteur;
   late Compte receveur;
   TypeTransaction type = TypeTransaction.IMMEDIAT;
@@ -21,31 +22,8 @@ class _PageAddVirementState extends State<PageAddVirement> {
   @override
   void initState() {
     super.initState();
-    comptes.addAll([
-      Compte(
-          id: 990,
-          solde: 541.41,
-          livret: Livret.cel(),
-          banque: 'Caisse',
-          color: Colors.yellow,
-          lastModification: DateTime.now()),
-      Compte(
-          id: 991,
-          solde: 612.35,
-          livret: Livret.pel(),
-          banque: 'BNP',
-          color: Colors.green,
-          lastModification: DateTime.now()),
-      Compte(
-          id: 992,
-          solde: 812.51,
-          livret: Livret.livretA(),
-          banque: 'Boursorama',
-          color: Colors.red,
-          lastModification: DateTime.now())
-    ]);
-    expediteur = comptes.first;
-    receveur = comptes.last;
+    expediteur = widget.comptes.first;
+    receveur = widget.comptes.last;
   }
 
   @override
@@ -140,7 +118,7 @@ class _PageAddVirementState extends State<PageAddVirement> {
           expediteur = newValue!;
         });
       },
-      items: comptes.map<DropdownMenuItem<Compte>>((compte) {
+      items: widget.comptes.map<DropdownMenuItem<Compte>>((compte) {
         return DropdownMenuItem<Compte>(
           value: compte,
           child: Container(
@@ -192,7 +170,7 @@ class _PageAddVirementState extends State<PageAddVirement> {
           receveur = newValue!;
         });
       },
-      items: comptes.map<DropdownMenuItem<Compte>>((compte) {
+      items: widget.comptes.map<DropdownMenuItem<Compte>>((compte) {
         return DropdownMenuItem<Compte>(
           value: compte,
           child: Container(

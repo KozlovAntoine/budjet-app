@@ -1,12 +1,14 @@
+import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ComptesCard extends StatelessWidget {
-  final TransactionBud transaction;
+  final Compte compte;
+  final TransactionBud? transaction;
   final Function delete;
-  ComptesCard({required this.transaction, required this.delete});
+  ComptesCard({required this.compte, this.transaction, required this.delete});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class ComptesCard extends StatelessWidget {
         print('modify this ${transaction.toString()}');
       },
       delete: () {
-        delete(transaction.compte);
+        delete(compte);
         print('delete this ${transaction.toString()}');
       },
       child: Material(
@@ -34,7 +36,7 @@ class ComptesCard extends StatelessWidget {
                     width: 70,
                     height: 70,
                     decoration: new BoxDecoration(
-                      color: transaction.compte.color,
+                      color: compte.color,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -45,7 +47,7 @@ class ComptesCard extends StatelessWidget {
                     //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        transaction.compte.solde.toStringAsFixed(2) + '€',
+                        compte.solde.toStringAsFixed(2) + '€',
                         style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.w700,
@@ -53,12 +55,12 @@ class ComptesCard extends StatelessWidget {
                       ),
                       SizedBox(height: 3),
                       Text(
-                        transaction.compte.livret.name,
+                        compte.livret.name,
                         style: TextStyle(fontSize: 20),
                       ),
                       SizedBox(height: 3),
                       Text(
-                        transaction.compte.banque,
+                        compte.banque,
                         style: TextStyle(fontSize: 18, color: Colors.black54),
                       ),
                     ],
@@ -81,7 +83,7 @@ class ComptesCard extends StatelessWidget {
   }
 
   bottom() {
-    if (transaction.montant != null && transaction.categorie != null) {
+    if (transaction != null) {
       return Row(
         //the bottom of the card
         children: [
@@ -96,7 +98,7 @@ class ComptesCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              transaction.categorie.icon,
+              transaction!.categorie.icon,
               size: 24,
             ),
           ),
@@ -104,19 +106,19 @@ class ComptesCard extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Text(transaction.categorie.nom.toString(),
+                Text(transaction!.categorie.nom.toString(),
                     style: TextStyle(fontSize: 18)),
-                Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date),
+                Text("le " + DateFormat('dd-MM-yyyy').format(transaction!.date),
                     style: TextStyle(fontSize: 13)),
               ],
               crossAxisAlignment: CrossAxisAlignment.start,
             ),
           ),
           Text(
-            transaction.montant.toStringAsFixed(2) + '€',
+            transaction!.montant.toStringAsFixed(2) + '€',
             style: TextStyle(
                 fontSize: 18,
-                color: transaction.montant > 0 ? Colors.green : Colors.red),
+                color: transaction!.montant > 0 ? Colors.green : Colors.red),
           ),
         ],
       );

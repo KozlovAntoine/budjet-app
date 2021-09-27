@@ -34,6 +34,7 @@ class TransactionBud extends ToDb {
   }
 
   static Future<TransactionBud> fromDAO(Map<String, dynamic> map) async {
+    print('TransactionBud from DAO : $map');
     Compte cpt = await CompteDAO().getFromId(map['compte']);
     Categorie cat = await CategorieDAO().getFromId(map['categorie']);
     return TransactionBud(

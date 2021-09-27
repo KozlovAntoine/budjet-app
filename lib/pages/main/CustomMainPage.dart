@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CustomMainPage extends StatelessWidget {
   final List<Widget> children;
   final GlobalKey<ScaffoldState> scaffoldKey;
-  CustomMainPage({required this.children, required this.scaffoldKey});
+  String? text;
+  CustomMainPage(
+      {required this.children, required this.scaffoldKey, this.text});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -11,7 +14,7 @@ class CustomMainPage extends StatelessWidget {
         if (event.delta.dx > 0) scaffoldKey.currentState!.openDrawer();
       },
       child: children.isEmpty
-          ? Center(child: Text('Vide'))
+          ? Center(child: Text(text == null ? 'Vide' : text!))
           : ListView(
               padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
               children: children,

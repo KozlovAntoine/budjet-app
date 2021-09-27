@@ -48,6 +48,7 @@ class _PageCategoriesState extends State<PageCategories> {
               .push(MaterialPageRoute(builder: (context) => PageAddCategorie()))
               .then((value) async {
             if (value != null && value is Categorie) {
+              print(value);
               await dao.insert(value);
               await refresh();
             }

@@ -2,6 +2,9 @@ import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/data/dao/CategorieDAO.dart';
+import 'package:budjet_app/data/dao/CompteDAO.dart';
+import 'package:budjet_app/data/dao/TransactionDAO.dart';
 import 'package:budjet_app/pages/add/PageAddTransaction.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
@@ -14,6 +17,23 @@ class PageTransaction extends StatefulWidget {
 
 class _PageTransactionState extends State<PageTransaction> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<Widget> widgets = [];
+  List<Compte> comptes = [];
+  List<Categorie> categories = [];
+  late TransactionDAO dao;
+  late CompteDAO compteDAO;
+  late CategorieDAO categorieDAO;
+  bool dbLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    dao = TransactionDAO();
+    compteDAO = CompteDAO();
+    categorieDAO = CategorieDAO();
+    refresh();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,43 +50,52 @@ class _PageTransactionState extends State<PageTransaction> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: floatButton(),
+      body: CustomMainPage(
+        children: widgets,
+        scaffoldKey: _scaffoldKey,
+        text: 'Il faut ajouter au moins un compte et une catégorie',
+      ),
+    );
+  }
+
+  floatButton() {
+    if (categories.isNotEmpty && comptes.isNotEmpty) {
+      return FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(
-                  MaterialPageRoute(builder: (context) => PageAddTransaction()))
-              .then((value) {
-            if (value != null) {}
+              .push(MaterialPageRoute(
+                  builder: (context) => PageAddTransaction(
+                        comptes: comptes,
+                        categories: categories,
+                      )))
+              .then((value) async {
+            if (value != null && value is TransactionBud) {
+              await dao.insert(value);
+              refresh();
+            }
           });
         },
         child: const Icon(Icons.add, color: Colors.white),
-      ),
-      body: CustomMainPage(
-        children: [
-          TransactionCard(
-            transaction: TransactionBud(
-              categorie: Categorie(
-                  nom: 'Téléphonie',
-                  color: Colors.orange,
-                  icon: Icons.phone,
-                  plafond: 25),
-              montant: 24.99,
-              date: DateTime.now(),
-              dateFin: DateTime.now(),
-              nom: 'Orange',
-              type: TypeTransaction.IMMEDIAT,
-              compte: Compte(
-                  id: 998,
-                  solde: 1234,
-                  livret: Livret.livretA(),
-                  banque: 'BNP Paribas',
-                  color: Colors.blue,
-                  lastModification: DateTime.now()),
-            ),
-          )
-        ],
-        scaffoldKey: _scaffoldKey,
-      ),
-    );
+      );
+    } else
+      Container();
+  }
+
+  refresh() async {
+    widgets = [];
+    List<TransactionBud> transactions = await dao.getAll();
+    comptes = await compteDAO.getAll();
+    categories = await categorieDAO.getAll();
+    transactions.forEach((element) {
+      widgets.add(TransactionCard(transaction: element));
+    });
+    print(comptes);
+    print(categories);
+    print(transactions);
+    setState(() {
+      dbLoaded = true;
+      print('setState');
+    });
   }
 }

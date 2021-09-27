@@ -19,11 +19,12 @@ class Categorie extends ToDb {
 
   @override
   String toString() {
-    return 'Categorie(nom: $nom, plafond: $plafond, color: $color, icon: ${icon.toString()})';
+    return 'Categorie(id: $id, nom: $nom, plafond: $plafond, color: $color, icon: ${icon.toString()})';
   }
 
   static Categorie fromDAO(Map<String, dynamic> map) {
     return Categorie(
+        id: map['idcat'],
         nom: map['nom'],
         plafond: map['plafond'],
         color: Color(map['color']),
@@ -34,6 +35,7 @@ class Categorie extends ToDb {
     return {
       'idcat': id,
       'nom': nom,
+      'plafond': plafond,
       'color': color.value,
       'icon': icon.codePoint,
     };

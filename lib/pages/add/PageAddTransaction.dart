@@ -6,13 +6,14 @@ import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 
 class PageAddTransaction extends StatefulWidget {
+  final List<Compte> comptes;
+  final List<Categorie> categories;
+  PageAddTransaction({required this.comptes, required this.categories});
   _PageAddTransactionState createState() => _PageAddTransactionState();
 }
 
 class _PageAddTransactionState extends State<PageAddTransaction> {
   final _formKey = GlobalKey<FormState>();
-  List<Compte> comptes = [];
-  List<Categorie> categories = [];
   final montant = TextEditingController();
   final name = TextEditingController();
   late Compte compteSelection;
@@ -22,43 +23,8 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
   @override
   void initState() {
     super.initState();
-    comptes.addAll([
-      Compte(
-          id: 994,
-          solde: 541.41,
-          livret: Livret.cel(),
-          banque: 'Caisse',
-          color: Colors.yellow,
-          lastModification: DateTime.now()),
-      Compte(
-          id: 995,
-          solde: 612.35,
-          livret: Livret.pel(),
-          banque: 'BNP',
-          color: Colors.green,
-          lastModification: DateTime.now()),
-      Compte(
-          id: 996,
-          solde: 812.51,
-          livret: Livret.livretA(),
-          banque: 'Boursorama',
-          color: Colors.red,
-          lastModification: DateTime.now())
-    ]);
-    categories.addAll([
-      Categorie(
-          nom: 'Téléphonie',
-          plafond: 30,
-          color: Colors.orange,
-          icon: Icons.phone),
-      Categorie(
-          nom: 'Courses',
-          plafond: 300,
-          color: Colors.green,
-          icon: Icons.food_bank),
-    ]);
-    categorieSelection = categories.first;
-    compteSelection = comptes.first;
+    categorieSelection = widget.categories.first;
+    compteSelection = widget.comptes.first;
   }
 
   @override
@@ -167,7 +133,7 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
           compteSelection = newValue!;
         });
       },
-      items: comptes.map<DropdownMenuItem<Compte>>((compte) {
+      items: widget.comptes.map<DropdownMenuItem<Compte>>((compte) {
         return DropdownMenuItem<Compte>(
           value: compte,
           child: Container(
@@ -218,7 +184,7 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
           categorieSelection = newValue!;
         });
       },
-      items: categories.map<DropdownMenuItem<Categorie>>((categorie) {
+      items: widget.categories.map<DropdownMenuItem<Categorie>>((categorie) {
         return DropdownMenuItem<Categorie>(
           value: categorie,
           child: Text(categorie.nom),

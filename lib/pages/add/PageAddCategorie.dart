@@ -131,6 +131,7 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
                       color: currentColor,
                       icon: _icon,
                     );
+                    print(categorie);
                     Navigator.of(context).pop(categorie);
                   }
                 },

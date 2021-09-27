@@ -72,21 +72,9 @@ class _MesComptesPageState extends State<PageCompte> {
     List<Compte> comptes = await dao.getAll();
     comptes.forEach((element) {
       widgets.add(ComptesCard(
-          delete: delete,
-          transaction: TransactionBud(
-            categorie: Categorie(
-                color: Colors.orange,
-                icon: Icons.phone,
-                nom: 'telephone',
-                plafond: 200,
-                id: 213),
-            montant: 24.99,
-            date: DateTime.now(),
-            dateFin: DateTime.now(),
-            nom: 'Orange',
-            type: TypeTransaction.IMMEDIAT,
-            compte: element,
-          )));
+        delete: delete,
+        compte: element,
+      ));
     });
     print('dddddd');
     print(comptes);

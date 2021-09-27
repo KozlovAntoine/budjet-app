@@ -2,6 +2,8 @@ import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/classes/Virement.dart';
+import 'package:budjet_app/data/dao/CompteDAO.dart';
+import 'package:budjet_app/data/dao/VirementDAO.dart';
 import 'package:budjet_app/pages/add/PageAddVirement.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
@@ -14,29 +16,19 @@ class PageVirement extends StatefulWidget {
 }
 
 class _PageVirementState extends State<PageVirement> {
-  List<VirementCard> cards = [
-    VirementCard(
-      virement: Virement(
-        date: DateTime.now(),
-        depuis: Compte(
-            id: 1000,
-            solde: 1234,
-            livret: Livret.livretA(),
-            banque: 'BNP Paribas',
-            color: Colors.blue,
-            lastModification: DateTime.now()),
-        vers: Compte(
-            id: 999,
-            solde: 9702,
-            banque: 'BNP Paribas',
-            livret: Livret.cel(),
-            color: Colors.green,
-            lastModification: DateTime.now()),
-        montant: 200,
-        type: TypeTransaction.IMMEDIAT,
-      ),
-    ),
-  ];
+  List<VirementCard> cards = [];
+  List<Compte> comptes = [];
+  late CompteDAO compteDAO;
+  late VirementDAO dao;
+  bool dbLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    dao = VirementDAO();
+    compteDAO = CompteDAO();
+    refresh();
+  }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
@@ -58,20 +50,25 @@ class _PageVirementState extends State<PageVirement> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => PageAddVirement()))
-              .then((value) {
-            if (value != null) {
-              cards.add(VirementCard(virement: value));
-              setState(() {});
+              .push(MaterialPageRoute(
+                  builder: (context) => PageAddVirement(comptes: comptes)))
+              .then((value) async {
+            if (value != null && value is Virement) {
+              await dao.insert(value);
+              refresh();
             }
           });
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: CustomMainPage(
-        children: cards,
-        scaffoldKey: _scaffoldKey,
-      ),
+      body: dbLoaded
+          ? CustomMainPage(
+              children: cards,
+              scaffoldKey: _scaffoldKey,
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 
@@ -104,5 +101,19 @@ class _PageVirementState extends State<PageVirement> {
         SizedBox(height: spaceHeight),
       ],
     );
+  }
+
+  refresh() async {
+    List<Virement> virements = await dao.getAll();
+    comptes = await compteDAO.getAll();
+    virements.forEach((element) {
+      cards.add(VirementCard(virement: element));
+    });
+    print(comptes);
+    print(virements);
+    setState(() {
+      dbLoaded = true;
+      print('setState');
+    });
   }
 }
