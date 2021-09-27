@@ -1,10 +1,10 @@
-import 'package:budjet_app/data/dao/CompteDAO.dart';
+import 'package:budjet_app/classes/ToDb.dart';
 import 'package:flutter/material.dart';
 
 import 'package:budjet_app/classes/Livret.dart';
 
-class Compte {
-  final int id;
+class Compte extends ToDb {
+  final int? id;
   final double solde;
   final String banque;
   final Livret livret;
@@ -12,7 +12,7 @@ class Compte {
   final DateTime lastModification;
 
   Compte({
-    required this.id,
+    this.id,
     required this.solde,
     required this.livret,
     required this.banque,
@@ -25,13 +25,24 @@ class Compte {
     return 'Compte(id $id, solde: $solde, banque: $banque, livret: $livret, color: $color, lastModification: $lastModification)';
   }
 
-  static Compte fromDAO(CompteDAO dao) {
+  static Compte fromDAO(Map<String, dynamic> map) {
     return Compte(
-        id: dao.idcpt,
-        solde: dao.solde,
-        livret: Livret.stringToLivret(dao.livret),
-        banque: dao.nom,
-        color: Color(dao.color),
-        lastModification: DateTime.parse(dao.lastModification));
+        id: map['idcpt'],
+        solde: map['solde'],
+        livret: Livret.stringToLivret(map['livret']),
+        banque: map['nom'],
+        color: Color(map['color']),
+        lastModification: DateTime.parse(map['lastModification']));
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'idcpt': id,
+      'solde': solde,
+      'nom': banque,
+      'livret': livret.name,
+      'color': color.value,
+      'lastModification': lastModification.toString(),
+    };
   }
 }

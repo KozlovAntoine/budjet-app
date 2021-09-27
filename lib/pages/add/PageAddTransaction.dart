@@ -136,6 +136,7 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                         nom: name.text,
                         categorie: categorieSelection,
                         date: DateTime.now(),
+                        dateFin: DateTime.now().add(Duration(days: 9999)),
                         type: type,
                         compte: compteSelection);
                     Navigator.of(context).pop(transaction);

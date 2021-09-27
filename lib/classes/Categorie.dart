@@ -1,13 +1,16 @@
-import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:flutter/material.dart';
 
-class Categorie {
+import 'ToDb.dart';
+
+class Categorie extends ToDb {
+  final int? id;
   final String nom;
   final double plafond;
   final Color color;
-  final IconData? icon;
+  final IconData icon;
 
   Categorie({
+    this.id,
     required this.nom,
     required this.plafond,
     required this.color,
@@ -19,11 +22,20 @@ class Categorie {
     return 'Categorie(nom: $nom, plafond: $plafond, color: $color, icon: ${icon.toString()})';
   }
 
-  static Categorie fromDAO(CategorieDAO dao) {
+  static Categorie fromDAO(Map<String, dynamic> map) {
     return Categorie(
-        nom: dao.nom,
-        plafond: dao.plafond,
-        color: Color(dao.color),
-        icon: IconData(dao.icon, fontFamily: 'MaterialIcons'));
+        nom: map['nom'],
+        plafond: map['plafond'],
+        color: Color(map['color']),
+        icon: IconData(map['icon'], fontFamily: 'MaterialIcons'));
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'idcat': id,
+      'nom': nom,
+      'color': color.value,
+      'icon': icon.codePoint,
+    };
   }
 }

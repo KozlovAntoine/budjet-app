@@ -126,13 +126,13 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
               TextButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    CategorieDAO dao = CategorieDAO(
-                        idcat: null,
-                        nom: name.text,
-                        plafond: double.parse(plafond.text),
-                        color: currentColor.value,
-                        icon: _icon.codePoint);
-                    Navigator.of(context).pop(dao);
+                    Categorie categorie = Categorie(
+                      nom: name.text,
+                      plafond: double.parse(plafond.text),
+                      color: currentColor,
+                      icon: _icon,
+                    );
+                    Navigator.of(context).pop(categorie);
                   }
                 },
                 child: Text('Enregistrer'),

@@ -1,4 +1,5 @@
 import 'package:budjet_app/classes/Categorie.dart';
+import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/data/database_bud.dart';
 import 'package:budjet_app/pages/add/PageAddCategorie.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
@@ -13,19 +14,16 @@ class PageCategories extends StatefulWidget {
 
 class _PageCategoriesState extends State<PageCategories> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  late DatabaseBud databaseBud;
   List<Widget> widgets = [];
+  late CategorieDAO dao;
+  bool categorieLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    initDatabase();
-  }
-
-  initDatabase() async {
-    databaseBud = DatabaseBud();
-    await databaseBud.initDone;
-    await refresh();
+    dao = CategorieDAO();
+    categorieLoaded = false;
+    refresh();
   }
 
   @override
@@ -50,30 +48,35 @@ class _PageCategoriesState extends State<PageCategories> {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => PageAddCategorie()))
               .then((value) async {
-            if (value != null) {
-              await databaseBud.insertCategorie(value);
-              refresh();
+            if (value != null && value is Categorie) {
+              await dao.insert(value);
+              await refresh();
             }
           });
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: CustomMainPage(
-        children: widgets,
-        scaffoldKey: _scaffoldKey,
-      ),
+      body: categorieLoaded
+          ? CustomMainPage(
+              children: widgets,
+              scaffoldKey: _scaffoldKey,
+            )
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 
   refresh() async {
     widgets = [];
-    List<Categorie> categories = await databaseBud.getAllCategories();
+    List<Categorie> categories = await dao.getAll();
     categories.forEach((element) {
       widgets.add(CategorieCard(categorie: element, pourcentage: 1));
     });
     print('dddddd');
     print(categories);
     setState(() {
+      categorieLoaded = true;
       print('setState');
     });
   }

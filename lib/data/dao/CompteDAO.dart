@@ -1,37 +1,42 @@
-class CompteDAO {
-  final int idcpt;
-  final double solde;
-  final String nom;
-  final String livret;
-  final int color;
-  final String lastModification;
+import 'package:budjet_app/classes/Compte.dart';
+import 'package:budjet_app/data/dao/DAO.dart';
+import 'package:budjet_app/data/database_bud.dart';
 
-  CompteDAO(
-      {required this.idcpt,
-      required this.solde,
-      required this.nom,
-      required this.livret,
-      required this.color,
-      required this.lastModification});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'idcpt': idcpt,
-      'solde': solde,
-      'nom': nom,
-      'livret': livret,
-      'color': color,
-      'lastModification': lastModification
-    };
+class CompteDAO extends DAO<Compte> {
+  CompteDAO() : super();
+  final String table = DatabaseBud.compte;
+  @override
+  Future<List<Compte>> getAll() async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table);
+    return List.generate(maps.length, (i) {
+      return Compte.fromDAO(maps[i]);
+    });
   }
 
-  Map<String, dynamic> toMapInsert() {
-    return {
-      'solde': solde,
-      'nom': nom,
-      'livret': livret,
-      'color': color,
-      'lastModification': lastModification
-    };
+  @override
+  Future<Compte> getFromId(int id) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'idcpt = ?', whereArgs: [id]);
+    return Compte.fromDAO(maps[0]);
+  }
+
+  @override
+  Future<int> insert(Compte compte) async {
+    final db = await DatabaseBud.instance.database;
+    return await db.insert(table, compte.toMap());
+  }
+
+  @override
+  Future<void> update(Compte compte) async {
+    final db = await DatabaseBud.instance.database;
+    db.update(table, compte.toMap());
+  }
+
+  @override
+  Future<void> delete(Compte compte) async {
+    final db = await DatabaseBud.instance.database;
+    db.delete(table, where: 'idcpt = ?', whereArgs: [compte.id]);
   }
 }

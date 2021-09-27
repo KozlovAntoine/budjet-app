@@ -52,6 +52,7 @@ class _PageTransactionState extends State<PageTransaction> {
                   plafond: 25),
               montant: 24.99,
               date: DateTime.now(),
+              dateFin: DateTime.now(),
               nom: 'Orange',
               type: TypeTransaction.IMMEDIAT,
               compte: Compte(

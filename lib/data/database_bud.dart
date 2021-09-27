@@ -1,24 +1,20 @@
-import 'package:budjet_app/classes/Categorie.dart';
-import 'package:budjet_app/classes/Compte.dart';
-import 'package:budjet_app/data/dao/CategorieDAO.dart';
-import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseBud {
-  final String _compte = 'BudComptes';
-  final String _categorie = 'BudCategories';
-  final String _transaction = 'BudTransactions';
-  final String _virement = 'BudVirements';
-  final String _revenu = 'BudRevenus';
-  final String _colorDb = 'color INTEGER,';
-  final String _creerDb = 'CREATE TABLE ';
-  final String _nomDb = 'nom TEXT,';
-  final String _montantDb = 'montant REAL,';
-  final String _dateDb = 'date TEXT,';
-  final String _dateFinDb = 'dateFin TEXT,';
-  final String _typeDb = 'type TEXT,';
+  static final String compte = 'BudComptes';
+  static final String categorie = 'BudCategories';
+  static final String transaction = 'BudTransactions';
+  static final String virement = 'BudVirements';
+  static final String revenu = 'BudRevenus';
+  static final String _colorDb = 'color INTEGER,';
+  static final String _creerDb = 'CREATE TABLE ';
+  static final String _nomDb = 'nom TEXT,';
+  static final String _montantDb = 'montant REAL,';
+  static final String _dateDb = 'date TEXT,';
+  static final String _dateFinDb = 'dateFin TEXT,';
+  static final String _typeDb = 'type INTEGER,';
   static late Future<Database> _database;
 
   DatabaseBud._privateConstructor();
@@ -26,6 +22,14 @@ class DatabaseBud {
 
   DatabaseBud() {
     _database = _initDatabase();
+  }
+
+  DatabaseBud._() {
+    _database = _initDatabase();
+  }
+
+  Future<Database> get database async {
+    return _database;
   }
 
   Future<Database> _initDatabase() async {
@@ -37,14 +41,14 @@ class DatabaseBud {
       },
       onCreate: (db, version) async {
         await db.execute(_creerDb +
-            _compte +
+            compte +
             '(idcpt INTEGER PRIMARY KEY AUTOINCREMENT, solde REAL,' +
             _nomDb +
             'livret TEXT,' +
             _colorDb +
             'lastModification TEXT)');
         await db.execute(_creerDb +
-            _categorie +
+            categorie +
             '(idcat INTEGER PRIMARY KEY AUTOINCREMENT,' +
             _nomDb +
             'plafond REAL,' +
@@ -52,35 +56,38 @@ class DatabaseBud {
             'icon INTEGER' +
             ')');
         await db.execute(_creerDb +
-            _transaction +
+            transaction +
             '(idt INTEGER PRIMARY KEY AUTOINCREMENT,' +
             _nomDb +
             _montantDb +
             _dateDb +
             _dateFinDb +
             _typeDb +
-            'compte INTEGER,' +
+            'compte INTEGER, categorie INTEGER, ' +
             'FOREIGN KEY (compte) REFERENCES ' +
-            _compte +
-            '(idcpt) ' +
+            compte +
+            '(idcpt), ' +
+            'FOREIGN KEY (categorie) REFERENCES ' +
+            categorie +
+            '(idcat) ' +
             ')');
         await db.execute(_creerDb +
-            _virement +
+            virement +
             '(idv INTEGER PRIMARY KEY AUTOINCREMENT,' +
-            'cptDepuis INTEGER, cptVers INTEGER,' +
+            'depuis INTEGER, vers INTEGER,' +
             _montantDb +
             _dateDb +
             _dateFinDb +
             _typeDb +
-            'FOREIGN KEY (cptDepuis) REFERENCES ' +
-            _compte +
+            'FOREIGN KEY (depuis) REFERENCES ' +
+            compte +
             '(idcpt),'
-                'FOREIGN KEY (cptVers) REFERENCES ' +
-            _compte +
+                'FOREIGN KEY (vers) REFERENCES ' +
+            compte +
             '(idcpt) ' +
             ')');
         await db.execute(_creerDb +
-            _revenu +
+            revenu +
             '(idr INTEGER PRIMARY KEY AUTOINCREMENT,' +
             _nomDb +
             _montantDb +
@@ -89,7 +96,7 @@ class DatabaseBud {
             _typeDb +
             'compte INTEGER,' +
             'FOREIGN KEY (compte) REFERENCES ' +
-            _compte +
+            compte +
             '(idcpt) ' +
             ')');
       },
@@ -98,47 +105,4 @@ class DatabaseBud {
   }
 
   Future<Database> get initDone => _database;
-
-  Future<int> insertCompte(CompteDAO compteDAO) async {
-    final db = await _database;
-    return await db.insert(_compte, compteDAO.toMapInsert());
-  }
-
-  Future<List<Compte>> getAllComptes() async {
-    final db = await _database;
-    final List<Map<String, dynamic>> maps = await db.query(_compte);
-    return List.generate(maps.length, (i) {
-      return Compte.fromDAO(CompteDAO(
-          idcpt: maps[i]['idcpt'],
-          solde: maps[i]['solde'],
-          nom: maps[i]['nom'],
-          livret: maps[i]['livret'],
-          color: maps[i]['color'],
-          lastModification: maps[i]['lastModification']));
-    });
-  }
-
-  Future<void> deleteCompte(int id) async {
-    final db = await _database;
-    await db.delete(_compte, where: 'idcpt = ?', whereArgs: [id]);
-  }
-
-  Future<int> insertCategorie(CategorieDAO dao) async {
-    final db = await _database;
-    return await db.insert(_categorie, dao.toMapInsert());
-  }
-
-  Future<List<Categorie>> getAllCategories() async {
-    final db = await _database;
-    final List<Map<String, dynamic>> maps = await db.query(_categorie);
-    return List.generate(maps.length, (i) {
-      return Categorie.fromDAO(CategorieDAO(
-        idcat: maps[i]['idcat'],
-        color: maps[i]['color'],
-        icon: maps[i]['icon'],
-        nom: maps[i]['nom'],
-        plafond: maps[i]['plafond'],
-      ));
-    });
-  }
 }

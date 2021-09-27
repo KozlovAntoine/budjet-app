@@ -1,12 +1,36 @@
 import 'package:budjet_app/pages/main/PageComptes.dart';
 import 'package:flutter/material.dart';
 
+import 'data/database_bud.dart';
+
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  bool dbIsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initDatabase();
+  }
+
+  initDatabase() async {
+    print('Loading database ...');
+    DatabaseBud databaseBud = DatabaseBud();
+    await databaseBud.initDone;
+    print('Database is loaded !');
+    setState(() {
+      dbIsLoaded = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +50,19 @@ class MyApp extends StatelessWidget {
       },
     );
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Budjet',
-      theme: ThemeData(
-          primaryColor: myBlue,
-          fontFamily: 'Roboto',
-          primarySwatch: myBlue,
-          scaffoldBackgroundColor: const Color(0xffF7F7FD)),
-      home: PageCompte(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Budjet',
+        theme: ThemeData(
+            primaryColor: myBlue,
+            fontFamily: 'Roboto',
+            primarySwatch: myBlue,
+            scaffoldBackgroundColor: const Color(0xffF7F7FD)),
+        home: dbIsLoaded
+            ? PageCompte()
+            : Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ));
   }
 }

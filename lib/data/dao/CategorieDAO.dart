@@ -1,34 +1,43 @@
-class CategorieDAO {
-  final int? idcat;
-  final String nom;
-  final double plafond;
-  final int color;
-  final int icon;
+import 'package:budjet_app/classes/Categorie.dart';
 
-  CategorieDAO({
-    required this.idcat,
-    required this.nom,
-    required this.plafond,
-    required this.color,
-    required this.icon,
-  });
+import '../database_bud.dart';
+import 'DAO.dart';
 
-  Map<String, dynamic> toMap() {
-    return {
-      'idcat': idcat,
-      'nom': nom,
-      'plafond': plafond,
-      'color': color,
-      'icon': icon,
-    };
+class CategorieDAO implements DAO<Categorie> {
+  final String table = DatabaseBud.categorie;
+
+  @override
+  Future<void> delete(Categorie t) async {
+    final db = await DatabaseBud.instance.database;
+    db.delete(table, where: 'idcat = ?', whereArgs: [t.id]);
   }
 
-  Map<String, dynamic> toMapInsert() {
-    return {
-      'nom': nom,
-      'plafond': plafond,
-      'color': color,
-      'icon': icon,
-    };
+  @override
+  Future<List<Categorie>> getAll() async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table);
+    return List.generate(maps.length, (i) {
+      return Categorie.fromDAO(maps[i]);
+    });
+  }
+
+  @override
+  Future<Categorie> getFromId(int id) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'idcat = ?', whereArgs: [id]);
+    return Categorie.fromDAO(maps[0]);
+  }
+
+  @override
+  Future<int> insert(Categorie t) async {
+    final db = await DatabaseBud.instance.database;
+    return await db.insert(table, t.toMap());
+  }
+
+  @override
+  Future<void> update(Categorie t) async {
+    final db = await DatabaseBud.instance.database;
+    db.update(table, t.toMap());
   }
 }

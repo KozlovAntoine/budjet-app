@@ -18,7 +18,7 @@ class ComptesCard extends StatelessWidget {
         print('modify this ${transaction.toString()}');
       },
       delete: () {
-        delete(transaction.compte.id);
+        delete(transaction.compte);
         print('delete this ${transaction.toString()}');
       },
       child: Material(
