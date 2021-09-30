@@ -1,16 +1,12 @@
-import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/classes/Revenu.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class TransactionCard extends StatelessWidget {
-  final TransactionBud transaction;
-  final Function delete;
+class RevenuCard extends StatelessWidget {
+  final Revenu revenu;
 
-  TransactionCard({
-    required this.transaction,
-    required this.delete,
-  });
+  RevenuCard({required this.revenu});
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +15,10 @@ class TransactionCard extends StatelessWidget {
         print('lala');
       },
       modify: () {
-        print('modify this $transaction');
+        print('modify this $revenu');
       },
       delete: () {
-        delete(transaction);
-        print('delete this $transaction');
+        print('delete this $revenu');
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -36,12 +31,8 @@ class TransactionCard extends StatelessWidget {
                 width: 70,
                 height: 70,
                 decoration: new BoxDecoration(
-                  color: transaction.categorie.color,
+                  color: revenu.color,
                   shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  transaction.categorie.icon,
-                  size: 40,
                 ),
               ),
               SizedBox(width: 10),
@@ -50,7 +41,7 @@ class TransactionCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    transaction.montant.toStringAsFixed(2) + '€',
+                    revenu.montant.toStringAsFixed(2) + '€',
                     style: TextStyle(
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w700,
@@ -58,13 +49,8 @@ class TransactionCard extends StatelessWidget {
                   ),
                   SizedBox(height: 3),
                   Text(
-                    transaction.nom.toString(),
+                    revenu.nom.toString(),
                     style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(height: 3),
-                  Text(
-                    transaction.categorie.nom.toString(),
-                    style: TextStyle(fontSize: 18, color: Colors.black54),
                   ),
                 ],
               ),
@@ -83,7 +69,7 @@ class TransactionCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: new BoxDecoration(
-                  color: transaction.compte.color,
+                  color: revenu.compte.color,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -91,15 +77,14 @@ class TransactionCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    Text(transaction.compte.livret.name,
+                    Text(revenu.compte.livret.name,
                         style: TextStyle(fontSize: 18)),
-                    Text(transaction.compte.banque,
-                        style: TextStyle(fontSize: 13)),
+                    Text(revenu.compte.banque, style: TextStyle(fontSize: 13)),
                   ],
                   crossAxisAlignment: CrossAxisAlignment.start,
                 ),
               ),
-              Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date),
+              Text("le " + DateFormat('dd-MM-yyyy').format(revenu.date),
                   style: TextStyle(fontSize: 13)),
             ],
           ),

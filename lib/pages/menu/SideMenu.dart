@@ -1,5 +1,6 @@
 import 'package:budjet_app/pages/main/PageCategories.dart';
 import 'package:budjet_app/pages/main/PageComptes.dart';
+import 'package:budjet_app/pages/main/PageRevenus.dart';
 import 'package:budjet_app/pages/main/PageTransactions.dart';
 import 'package:budjet_app/pages/main/PageVirements.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,10 @@ class SideMenu extends StatelessWidget {
               Icons.account_balance,
               color: iconColor,
             ),
-            title: Text("Comptes"),
+            title: Text(
+              "Comptes",
+              style: TextStyle(fontSize: 18),
+            ),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -28,6 +32,7 @@ class SideMenu extends StatelessWidget {
               ));
             },
           ),
+          Divider(),
           ListTile(
             leading: Icon(
               Icons.apps,
@@ -41,6 +46,21 @@ class SideMenu extends StatelessWidget {
               ));
             },
           ),
+          Divider(),
+          ListTile(
+            leading: Icon(
+              Icons.compare_arrows,
+              color: iconColor,
+            ),
+            title: Text("Revenus"),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => PageRevenus(),
+              ));
+            },
+          ),
+          Divider(),
           ListTile(
             leading: Icon(
               Icons.euro,
@@ -54,6 +74,7 @@ class SideMenu extends StatelessWidget {
               ));
             },
           ),
+          Divider(),
           ListTile(
             leading: Icon(
               Icons.compare_arrows,
@@ -67,6 +88,7 @@ class SideMenu extends StatelessWidget {
               ));
             },
           ),
+          Divider(),
         ],
       ),
     );

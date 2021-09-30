@@ -8,7 +8,7 @@ class TransactionDAO extends DAO<TransactionBud> {
   @override
   Future<void> delete(TransactionBud t) async {
     final db = await DatabaseBud.instance.database;
-    db.delete(table, where: 'idt = ?', whereArgs: [t.id]);
+    await db.delete(table, where: 'idt = ?', whereArgs: [t.id]);
   }
 
   @override
@@ -17,17 +17,60 @@ class TransactionDAO extends DAO<TransactionBud> {
     final List<Map<String, dynamic>> maps = await db.query(table);
     List<TransactionBud> transactions = [];
     TransactionBud tmp;
-    maps.forEach((element) async {
+    for (var element in maps) {
       tmp = await TransactionBud.fromDAO(element);
       transactions.add(tmp);
-    });
+    }
+    return transactions;
+  }
+
+  Future<List<TransactionBud>> getAllFromDate(DateTime date) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where:
+            "date BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')");
+    List<TransactionBud> transactions = [];
+    TransactionBud tmp;
+    for (var element in maps) {
+      tmp = await TransactionBud.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
+
+  Future<List<TransactionBud>> transactionUnCompteJusquaAujourdhui(
+      int idCompte) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where: "compte = ? AND date <= date('now','+1 day')",
+        whereArgs: [idCompte]);
+    List<TransactionBud> transactions = [];
+    TransactionBud tmp;
+    for (var element in maps) {
+      tmp = await TransactionBud.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
+
+  Future<List<TransactionBud>> getAllFromOneCategorie(int id) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'categorie = ?', whereArgs: [id]);
+    List<TransactionBud> transactions = [];
+    TransactionBud tmp;
+    for (var element in maps) {
+      tmp = await TransactionBud.fromDAO(element);
+      transactions.add(tmp);
+    }
     return transactions;
   }
 
   @override
   Future<TransactionBud> getFromId(int id) async {
     final db = await DatabaseBud.instance.database;
-    final List<Map<String, dynamic>> maps = await db.query(table);
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'idt = ?', whereArgs: [id], limit: 1);
     return await TransactionBud.fromDAO(maps[0]);
   }
 

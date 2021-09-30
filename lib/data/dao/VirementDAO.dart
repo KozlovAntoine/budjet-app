@@ -17,17 +17,44 @@ class VirementDAO extends DAO<Virement> {
     final List<Map<String, dynamic>> maps = await db.query(table);
     List<Virement> virements = [];
     Virement tmp;
-    maps.forEach((element) async {
+    for (var element in maps) {
       tmp = await Virement.fromDAO(element);
       virements.add(tmp);
-    });
+    }
+    return virements;
+  }
+
+  Future<List<Virement>> getAllFromOneCompteDepuis(int id) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'depuis = ?', whereArgs: [id]);
+    List<Virement> virements = [];
+    Virement tmp;
+    for (var element in maps) {
+      tmp = await Virement.fromDAO(element);
+      virements.add(tmp);
+    }
+    return virements;
+  }
+
+  Future<List<Virement>> getAllFromOneCompteVers(int id) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'vers = ?', whereArgs: [id]);
+    List<Virement> virements = [];
+    Virement tmp;
+    for (var element in maps) {
+      tmp = await Virement.fromDAO(element);
+      virements.add(tmp);
+    }
     return virements;
   }
 
   @override
   Future<Virement> getFromId(int id) async {
     final db = await DatabaseBud.instance.database;
-    final List<Map<String, dynamic>> maps = await db.query(table);
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'idv = ?', whereArgs: [id], limit: 1);
     return await Virement.fromDAO(maps[0]);
   }
 

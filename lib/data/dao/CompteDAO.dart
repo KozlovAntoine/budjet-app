@@ -3,7 +3,6 @@ import 'package:budjet_app/data/dao/DAO.dart';
 import 'package:budjet_app/data/database_bud.dart';
 
 class CompteDAO extends DAO<Compte> {
-  CompteDAO() : super();
   final String table = DatabaseBud.compte;
   @override
   Future<List<Compte>> getAll() async {
@@ -18,7 +17,7 @@ class CompteDAO extends DAO<Compte> {
   Future<Compte> getFromId(int id) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps =
-        await db.query(table, where: 'idcpt = ?', whereArgs: [id]);
+        await db.query(table, where: 'idcpt = ?', whereArgs: [id], limit: 1);
     return Compte.fromDAO(maps[0]);
   }
 

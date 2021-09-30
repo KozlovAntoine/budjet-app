@@ -2,7 +2,7 @@ import 'package:budjet_app/classes/ToDb.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 
 import 'Compte.dart';
-import 'Transaction.dart';
+import 'TypeTransaction.dart';
 
 class Virement extends ToDb {
   final int? id;

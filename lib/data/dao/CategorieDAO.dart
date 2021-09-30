@@ -25,7 +25,7 @@ class CategorieDAO implements DAO<Categorie> {
   Future<Categorie> getFromId(int id) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps =
-        await db.query(table, where: 'idcat = ?', whereArgs: [id]);
+        await db.query(table, where: 'idcat = ?', whereArgs: [id], limit: 1);
     return Categorie.fromDAO(maps[0]);
   }
 

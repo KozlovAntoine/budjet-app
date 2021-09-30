@@ -3,18 +3,20 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseBud {
+  static final String _creerDb = 'CREATE TABLE ';
+
   static final String compte = 'BudComptes';
   static final String categorie = 'BudCategories';
   static final String transaction = 'BudTransactions';
   static final String virement = 'BudVirements';
   static final String revenu = 'BudRevenus';
-  static final String _colorDb = 'color INTEGER,';
-  static final String _creerDb = 'CREATE TABLE ';
-  static final String _nomDb = 'nom TEXT,';
-  static final String _montantDb = 'montant REAL,';
-  static final String _dateDb = 'date TEXT,';
-  static final String _dateFinDb = 'dateFin TEXT,';
-  static final String _typeDb = 'type INTEGER,';
+
+  static final String _colorDb = 'color INTEGER NOT NULL,';
+  static final String _nomDb = 'nom TEXT NOT NULL,';
+  static final String _montantDb = 'montant REAL NOT NULL,';
+  static final String _dateDb = 'date TEXT NOT NULL,';
+  static final String _dateFinDb = 'dateFin TEXT NOT NULL,';
+  static final String _typeDb = 'type INTEGER NOT NULL,';
   static late Future<Database> _database;
 
   DatabaseBud._privateConstructor();
@@ -36,65 +38,16 @@ class DatabaseBud {
         await db.execute('PRAGMA foreign_keys = ON');
       },
       onCreate: (db, version) async {
-        await db.execute(_creerDb +
-            compte +
-            '(idcpt INTEGER PRIMARY KEY AUTOINCREMENT, solde REAL,' +
-            _nomDb +
-            'livret TEXT,' +
-            _colorDb +
-            'lastModification TEXT)');
-        await db.execute(_creerDb +
-            categorie +
-            '(idcat INTEGER PRIMARY KEY AUTOINCREMENT,' +
-            _nomDb +
-            'plafond REAL,' +
-            _colorDb +
-            'icon INTEGER' +
-            ')');
-        await db.execute(_creerDb +
-            transaction +
-            '(idt INTEGER PRIMARY KEY AUTOINCREMENT,' +
-            _nomDb +
-            _montantDb +
-            _dateDb +
-            _dateFinDb +
-            _typeDb +
-            'compte INTEGER, categorie INTEGER, ' +
-            'FOREIGN KEY (compte) REFERENCES ' +
-            compte +
-            '(idcpt), ' +
-            'FOREIGN KEY (categorie) REFERENCES ' +
-            categorie +
-            '(idcat) ' +
-            ')');
-        await db.execute(_creerDb +
-            virement +
-            '(idv INTEGER PRIMARY KEY AUTOINCREMENT,' +
-            'depuis INTEGER, vers INTEGER,' +
-            _montantDb +
-            _dateDb +
-            _dateFinDb +
-            _typeDb +
-            'FOREIGN KEY (depuis) REFERENCES ' +
-            compte +
-            '(idcpt),'
-                'FOREIGN KEY (vers) REFERENCES ' +
-            compte +
-            '(idcpt) ' +
-            ')');
-        await db.execute(_creerDb +
-            revenu +
-            '(idr INTEGER PRIMARY KEY AUTOINCREMENT,' +
-            _nomDb +
-            _montantDb +
-            _dateDb +
-            _dateFinDb +
-            _typeDb +
-            'compte INTEGER,' +
-            'FOREIGN KEY (compte) REFERENCES ' +
-            compte +
-            '(idcpt) ' +
-            ')');
+        await db.execute(
+            '$_creerDb $compte(idcpt INTEGER PRIMARY KEY AUTOINCREMENT, solde REAL, $_nomDb livret TEXT NOT NULL, $_colorDb lastModification TEXT NOT NULL, transactionId INTEGER)');
+        await db.execute(
+            '$_creerDb $categorie(idcat INTEGER PRIMARY KEY AUTOINCREMENT, $_nomDb plafond REAL NOT NULL, $_colorDb icon INTEGER NOT NULL)');
+        await db.execute(
+            '$_creerDb $transaction(idt INTEGER PRIMARY KEY AUTOINCREMENT,$_nomDb $_montantDb $_dateDb $_dateFinDb $_typeDb compte INTEGER NOT NULL, categorie INTEGER NOT NULL, FOREIGN KEY (compte) REFERENCES $compte(idcpt) ON DELETE CASCADE, FOREIGN KEY (categorie) REFERENCES $categorie(idcat) ON DELETE CASCADE)');
+        await db.execute(
+            '$_creerDb $virement(idv INTEGER PRIMARY KEY AUTOINCREMENT, depuis INTEGER NOT NULL, vers INTEGER NOT NULL, $_montantDb $_dateDb $_dateFinDb  $_typeDb FOREIGN KEY (depuis) REFERENCES $compte(idcpt) ON DELETE CASCADE, FOREIGN KEY (vers) REFERENCES $compte(idcpt) ON DELETE CASCADE)');
+        await db.execute(
+            '$_creerDb $revenu(idr INTEGER PRIMARY KEY AUTOINCREMENT, $_nomDb $_montantDb $_dateDb $_dateFinDb $_typeDb $_colorDb compte INTEGER NOT NULL, FOREIGN KEY (compte) REFERENCES $compte(idcpt) ON DELETE CASCADE)');
       },
       version: 1,
     );

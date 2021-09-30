@@ -1,11 +1,12 @@
+import 'dart:math';
+
 import 'package:budjet_app/classes/ToDb.dart';
 import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 
 import 'Categorie.dart';
 import 'Compte.dart';
-
-enum TypeTransaction { IMMEDIAT, DIFFERET, PERMANANT }
+import 'TypeTransaction.dart';
 
 class TransactionBud extends ToDb {
   final int? id;
@@ -60,5 +61,21 @@ class TransactionBud extends ToDb {
       'compte': compte.id,
       'categorie': categorie.id,
     };
+  }
+
+  static void montantCroissant(List<TransactionBud> list) {
+    list.sort((a, b) => max(a.montant.toInt(), b.montant.toInt()));
+  }
+
+  static void montantDecroissant(List<TransactionBud> list) {
+    list.sort((a, b) => min(a.montant.toInt(), b.montant.toInt()));
+  }
+
+  static void dateCroissant(List<TransactionBud> list) {
+    list.sort((a, b) => a.date.isBefore(b.date) ? -1 : 1);
+  }
+
+  static void dateDecroissant(List<TransactionBud> list) {
+    list.sort((a, b) => a.date.isBefore(b.date) ? 1 : -1);
   }
 }

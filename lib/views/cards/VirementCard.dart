@@ -97,7 +97,7 @@ class VirementCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          compte.solde.toStringAsFixed(2) + '€',
+          compte.soldeInitial.toStringAsFixed(2) + '€',
           style: TextStyle(
             color: Colors.red,
             fontSize: 24,
@@ -109,7 +109,7 @@ class VirementCard extends StatelessWidget {
           size: 40,
         ),
         Text(
-          (compte.solde + montant).toStringAsFixed(2) + '€',
+          (compte.soldeInitial + montant).toStringAsFixed(2) + '€',
           style: TextStyle(
             color: Colors.green,
             fontSize: 24,

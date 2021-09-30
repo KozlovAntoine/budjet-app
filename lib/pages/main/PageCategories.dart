@@ -13,7 +13,7 @@ class PageCategories extends StatefulWidget {
 
 class _PageCategoriesState extends State<PageCategories> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  List<Widget> widgets = [];
+  List<CategorieCard> widgets = [];
   late CategorieDAO dao;
   bool categorieLoaded = false;
 
@@ -50,7 +50,7 @@ class _PageCategoriesState extends State<PageCategories> {
             if (value != null && value is Categorie) {
               print(value);
               await dao.insert(value);
-              await refresh();
+              refresh();
             }
           });
         },
@@ -71,7 +71,7 @@ class _PageCategoriesState extends State<PageCategories> {
     widgets = [];
     List<Categorie> categories = await dao.getAll();
     categories.forEach((element) {
-      widgets.add(CategorieCard(categorie: element, pourcentage: 1));
+      widgets.add(CategorieCard(categorie: element, pourcentage: 100));
     });
     print('dddddd');
     print(categories);

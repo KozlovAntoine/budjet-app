@@ -47,7 +47,7 @@ class ComptesCard extends StatelessWidget {
                     //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        compte.solde.toStringAsFixed(2) + '€',
+                        compte.soldeInitial.toStringAsFixed(2) + '€',
                         style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.w700,

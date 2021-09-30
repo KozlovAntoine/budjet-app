@@ -1,9 +1,11 @@
+import 'package:budjet_app/animation/ColoredText.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
-import 'package:budjet_app/classes/Livret.dart';
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/classes/TypeTransaction.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PageAddTransaction extends StatefulWidget {
   final List<Compte> comptes;
@@ -19,12 +21,25 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
   late Compte compteSelection;
   late Categorie categorieSelection;
   TypeTransaction type = TypeTransaction.IMMEDIAT;
+  double nouveauSolde = 0;
+  DateTimeRange? dateRange;
 
   @override
   void initState() {
     super.initState();
     categorieSelection = widget.categories.first;
     compteSelection = widget.comptes.first;
+    nouveauSolde = compteSelection.soldeInitial;
+    montant.addListener(() {
+      try {
+        double tmp = double.parse(montant.text);
+        setState(() {
+          nouveauSolde = compteSelection.soldeInitial - tmp;
+        });
+      } on Exception {
+        print('error');
+      }
+    });
   }
 
   @override
@@ -73,7 +88,7 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                       signed: false, decimal: true),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Entrez votre solde actuel";
+                      return "Entrez le montant du transfert";
                     }
                     try {
                       double.parse(montant.text);
@@ -95,13 +110,23 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                 context: context,
               ),
               TextButton(
+                onPressed: () => pickDateRange(context),
+                child: Text('Date : ' + getDebut()),
+              ),
+              TextButton(
+                onPressed: () => pickDateRange(context),
+                child: Text('Date fin : ' + getFin()),
+              ),
+              TextButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     TransactionBud transaction = TransactionBud(
                         montant: double.parse(montant.text),
                         nom: name.text,
                         categorie: categorieSelection,
-                        date: DateTime.now(),
+                        date: dateRange != null
+                            ? dateRange!.start
+                            : DateTime.now(),
                         dateFin: DateTime.now().add(Duration(days: 9999)),
                         type: type,
                         compte: compteSelection);
@@ -144,7 +169,9 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                 Text(compte.livret.name),
                 Spacer(),
                 Text(
-                  'Solde actuel : ' + compte.solde.toStringAsFixed(2) + '€',
+                  'Solde actuel : ' +
+                      compte.soldeInitial.toStringAsFixed(2) +
+                      '€',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -153,7 +180,7 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                 ),
                 Spacer(),
                 Text(
-                  'Nouveau solde : ' + compte.solde.toStringAsFixed(2) + '€',
+                  'Nouveau solde : ' + nouveauSolde.toStringAsFixed(2) + '€',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -217,5 +244,39 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
       }).toList(),
       dropdownColor: Colors.white,
     );
+  }
+
+  Future pickDateRange(BuildContext context) async {
+    final initial = DateTimeRange(
+      start: DateTime.now(),
+      end: DateTime.now().add(Duration(days: 3)),
+    );
+    final newDateRange = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 5),
+      lastDate: DateTime(DateTime.now().year + 5),
+      initialDateRange: dateRange ?? initial,
+      initialEntryMode: DatePickerEntryMode.calendar,
+    );
+    if (newDateRange == null) return;
+    setState(() {
+      dateRange = newDateRange;
+    });
+  }
+
+  String getDebut() {
+    if (dateRange == null) {
+      return "Début";
+    } else {
+      return DateFormat('dd/MM/yyyy').format(dateRange!.start);
+    }
+  }
+
+  String getFin() {
+    if (dateRange == null) {
+      return "Fin";
+    } else {
+      return DateFormat('dd/MM/yyyy').format(dateRange!.end);
+    }
   }
 }

@@ -1,38 +1,36 @@
+import 'package:budjet_app/animation/ColorPick.dart';
 import 'package:budjet_app/classes/Compte.dart';
+import 'package:budjet_app/classes/Revenu.dart';
 import 'package:budjet_app/classes/TypeTransaction.dart';
-import 'package:budjet_app/classes/Virement.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
 
-class PageAddVirement extends StatefulWidget {
+class PageAddRevenu extends StatefulWidget {
   final List<Compte> comptes;
-  PageAddVirement({required this.comptes});
-  @override
-  _PageAddVirementState createState() => _PageAddVirementState();
+
+  PageAddRevenu({required this.comptes});
+
+  _PageAddRevenuState createState() => _PageAddRevenuState();
 }
 
-class _PageAddVirementState extends State<PageAddVirement> {
+class _PageAddRevenuState extends State<PageAddRevenu> {
   final _formKey = GlobalKey<FormState>();
   final montant = TextEditingController();
-  late Compte expediteur;
-  late Compte receveur;
-  TypeTransaction type = TypeTransaction.IMMEDIAT;
-  double nouveauSoldeExpediteur = 0;
-  double nouveauSoldeReceveur = 0;
+  final name = TextEditingController();
+  late Compte compteSelection;
+  Color currentColor = Color(Colors.blue.value);
+  double nouveauSolde = 0;
 
   @override
   void initState() {
     super.initState();
-    expediteur = widget.comptes.first;
-    nouveauSoldeExpediteur = expediteur.soldeInitial;
-    receveur = widget.comptes.last;
-    nouveauSoldeReceveur = receveur.soldeInitial;
+    compteSelection = widget.comptes.first;
+    nouveauSolde = compteSelection.soldeInitial;
     montant.addListener(() {
       try {
         double tmp = double.parse(montant.text);
         setState(() {
-          nouveauSoldeExpediteur = expediteur.soldeInitial - tmp;
-          nouveauSoldeReceveur = receveur.soldeInitial + tmp;
+          nouveauSolde = compteSelection.soldeInitial + tmp;
         });
       } on Exception {
         print('error');
@@ -40,13 +38,18 @@ class _PageAddVirementState extends State<PageAddVirement> {
     });
   }
 
+  void changeColor(Color color) {
+    setState(() => currentColor = color);
+  }
+
+  TypeTransaction type = TypeTransaction.IMMEDIAT;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "Ajout d'un virement",
+          "Ajout d'un revenu",
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -60,15 +63,22 @@ class _PageAddVirementState extends State<PageAddVirement> {
           key: _formKey,
           child: ListView(
             children: [
-              CustomAddCarte(
-                icon: Icons.arrow_circle_up,
-                main: _expediteur(),
+              CustomAddCarteFieldWithEntry(
+                icon: Icons.drive_file_rename_outline,
+                controller: name,
+                hint: "Nom, ex: Travail...",
+                keyboard: TextInputType.text,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Entrez le nom de votre revenu";
+                  }
+                  return null;
+                },
                 context: context,
-                height: 80,
               ),
               CustomAddCarteFieldWithEntry(
                   controller: montant,
-                  hint: 'Montant du transfert, ex: 100.00€',
+                  hint: 'Montant du revenu, ex: 100.00€',
                   keyboard: TextInputType.numberWithOptions(
                       signed: false, decimal: true),
                   validator: (value) {
@@ -85,26 +95,29 @@ class _PageAddVirementState extends State<PageAddVirement> {
                   context: context,
                   icon: Icons.euro),
               CustomAddCarte(
-                icon: Icons.arrow_circle_down,
-                main: _receveur(),
+                icon: Icons.account_balance,
+                main: _listeCompte(),
                 context: context,
-                height: 80,
               ),
               CustomAddCarte(
                 icon: Icons.access_time,
                 main: _typeVirement(),
                 context: context,
               ),
+              ColorPick(onChange: changeColor),
               TextButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    Virement virement = Virement(
-                        date: DateTime.now(),
-                        depuis: expediteur,
-                        vers: receveur,
-                        montant: double.parse(montant.text),
-                        type: type);
-                    Navigator.of(context).pop(virement);
+                    Revenu revenu = Revenu(
+                      montant: double.parse(montant.text),
+                      nom: name.text,
+                      date: DateTime.now(),
+                      dateFin: DateTime.now().add(Duration(days: 9999)),
+                      type: type,
+                      compte: compteSelection,
+                      color: currentColor,
+                    );
+                    Navigator.of(context).pop(revenu);
                   }
                 },
                 child: Text('Enregistrer'),
@@ -116,20 +129,20 @@ class _PageAddVirementState extends State<PageAddVirement> {
     );
   }
 
-  _expediteur() {
+  _listeCompte() {
     return DropdownButton<Compte>(
       isExpanded: true,
-      value: expediteur,
+      value: compteSelection,
       icon: const Icon(Icons.keyboard_arrow_left),
       iconSize: 40,
       iconEnabledColor: Theme.of(context).primaryColor,
       elevation: 16,
-      itemHeight: 80,
       style: const TextStyle(color: Colors.black, fontSize: 20),
       underline: Container(),
+      itemHeight: 80,
       onChanged: (newValue) {
         setState(() {
-          expediteur = newValue!;
+          compteSelection = newValue!;
         });
       },
       items: widget.comptes.map<DropdownMenuItem<Compte>>((compte) {
@@ -154,65 +167,7 @@ class _PageAddVirementState extends State<PageAddVirement> {
                 ),
                 Spacer(),
                 Text(
-                  'Nouveau solde : ' +
-                      nouveauSoldeExpediteur.toStringAsFixed(2) +
-                      '€',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-      dropdownColor: Colors.white,
-    );
-  }
-
-  _receveur() {
-    return DropdownButton<Compte>(
-      isExpanded: true,
-      value: receveur,
-      icon: const Icon(Icons.keyboard_arrow_left),
-      iconSize: 40,
-      iconEnabledColor: Theme.of(context).primaryColor,
-      elevation: 16,
-      itemHeight: 80,
-      style: const TextStyle(color: Colors.black, fontSize: 20),
-      underline: Container(),
-      onChanged: (newValue) {
-        setState(() {
-          receveur = newValue!;
-        });
-      },
-      items: widget.comptes.map<DropdownMenuItem<Compte>>((compte) {
-        return DropdownMenuItem<Compte>(
-          value: compte,
-          child: Container(
-            height: 80,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(compte.livret.name),
-                Spacer(),
-                Text(
-                  'Solde actuel : ' +
-                      compte.soldeInitial.toStringAsFixed(2) +
-                      '€',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w200,
-                  ),
-                ),
-                Spacer(),
-                Text(
-                  'Nouveau solde : ' +
-                      nouveauSoldeReceveur.toStringAsFixed(2) +
-                      '€',
+                  'Nouveau solde : ' + nouveauSolde.toStringAsFixed(2) + '€',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -246,7 +201,7 @@ class _PageAddVirementState extends State<PageAddVirement> {
       items: TypeTransaction.values.map<DropdownMenuItem<TypeTransaction>>((t) {
         return DropdownMenuItem<TypeTransaction>(
           value: t,
-          child: Text(t.toString().split('.')[1]),
+          child: Text(TypeTransactionHelper.typeToString(t)),
         );
       }).toList(),
       dropdownColor: Colors.white,
