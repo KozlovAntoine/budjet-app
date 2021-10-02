@@ -1,11 +1,10 @@
-import 'package:budjet_app/animation/ColoredText.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/classes/TypeTransaction.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
+import 'package:budjet_app/views/cards/DateCard.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class PageAddTransaction extends StatefulWidget {
   final List<Compte> comptes;
@@ -21,20 +20,21 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
   late Compte compteSelection;
   late Categorie categorieSelection;
   TypeTransaction type = TypeTransaction.IMMEDIAT;
-  double nouveauSolde = 0;
-  DateTimeRange? dateRange;
+  double montantTransaction = 0;
+  late DateTime initial, end;
 
   @override
   void initState() {
     super.initState();
+    initial = DateTime.now();
+    end = DateTime.now();
     categorieSelection = widget.categories.first;
     compteSelection = widget.comptes.first;
-    nouveauSolde = compteSelection.soldeInitial;
     montant.addListener(() {
       try {
         double tmp = double.parse(montant.text);
         setState(() {
-          nouveauSolde = compteSelection.soldeInitial - tmp;
+          montantTransaction = tmp;
         });
       } on Exception {
         print('error');
@@ -42,8 +42,21 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
     });
   }
 
+  void changerInitial(DateTime time) {
+    this.initial = time;
+    print('changement initial $initial');
+  }
+
+  void changerEnd(DateTime time) {
+    this.end = time;
+    print('changement end $end');
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('------------------------------------------------------------');
+    print('BUILD initial $initial');
+    print('BUILD end $end');
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -109,31 +122,37 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                 main: _typeVirement(),
                 context: context,
               ),
-              TextButton(
-                onPressed: () => pickDateRange(context),
-                child: Text('Date : ' + getDebut()),
-              ),
-              TextButton(
-                onPressed: () => pickDateRange(context),
-                child: Text('Date fin : ' + getFin()),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    TransactionBud transaction = TransactionBud(
-                        montant: double.parse(montant.text),
-                        nom: name.text,
-                        categorie: categorieSelection,
-                        date: dateRange != null
-                            ? dateRange!.start
-                            : DateTime.now(),
-                        dateFin: DateTime.now().add(Duration(days: 9999)),
-                        type: type,
-                        compte: compteSelection);
-                    Navigator.of(context).pop(transaction);
-                  }
-                },
-                child: Text('Enregistrer'),
+              _selectionDate(),
+              ButtonEnregister(
+                widget: TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      print('type $type');
+                      print('initial $initial');
+                      print('end $end');
+                      TransactionBud transaction = TransactionBud(
+                          montant: double.parse(montant.text),
+                          nom: name.text,
+                          categorie: categorieSelection,
+                          dateInitial: initial,
+                          dateActuel: initial,
+                          dateFin: type == TypeTransaction.PERMANANT &&
+                                  end.isAfter(initial)
+                              ? end
+                              : initial,
+                          type: type,
+                          compte: compteSelection);
+                      Navigator.of(context).pop(transaction);
+                    }
+                  },
+                  child: Text(
+                    'Enregistrer',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                  ),
+                ),
               ),
             ],
           ),
@@ -170,7 +189,7 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                 Spacer(),
                 Text(
                   'Solde actuel : ' +
-                      compte.soldeInitial.toStringAsFixed(2) +
+                      compte.soldeActuel.toStringAsFixed(2) +
                       '€',
                   style: TextStyle(
                     color: Colors.black,
@@ -180,7 +199,10 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
                 ),
                 Spacer(),
                 Text(
-                  'Nouveau solde : ' + nouveauSolde.toStringAsFixed(2) + '€',
+                  'Nouveau solde : ' +
+                      (compte.soldeActuel - montantTransaction)
+                          .toStringAsFixed(2) +
+                      '€',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -239,44 +261,31 @@ class _PageAddTransactionState extends State<PageAddTransaction> {
       items: TypeTransaction.values.map<DropdownMenuItem<TypeTransaction>>((t) {
         return DropdownMenuItem<TypeTransaction>(
           value: t,
-          child: Text(t.toString().split('.')[1]),
+          child: Text(TypeTransactionHelper.typeToString(t)),
         );
       }).toList(),
       dropdownColor: Colors.white,
     );
   }
 
-  Future pickDateRange(BuildContext context) async {
-    final initial = DateTimeRange(
-      start: DateTime.now(),
-      end: DateTime.now().add(Duration(days: 3)),
-    );
-    final newDateRange = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(DateTime.now().year - 5),
-      lastDate: DateTime(DateTime.now().year + 5),
-      initialDateRange: dateRange ?? initial,
-      initialEntryMode: DatePickerEntryMode.calendar,
-    );
-    if (newDateRange == null) return;
-    setState(() {
-      dateRange = newDateRange;
-    });
-  }
-
-  String getDebut() {
-    if (dateRange == null) {
-      return "Début";
+  _selectionDate() {
+    if (type == TypeTransaction.PERMANANT) {
+      return DateCard(
+        changeInitialDate: changerInitial,
+        changeEndDate: changerEnd,
+        afficherEnd: true,
+        init: initial,
+      );
+    } else if (type == TypeTransaction.DIFFERE) {
+      return DateCard(
+        changeInitialDate: changerInitial,
+        changeEndDate: changerEnd,
+        afficherEnd: false,
+        init: initial,
+      );
     } else {
-      return DateFormat('dd/MM/yyyy').format(dateRange!.start);
-    }
-  }
-
-  String getFin() {
-    if (dateRange == null) {
-      return "Fin";
-    } else {
-      return DateFormat('dd/MM/yyyy').format(dateRange!.end);
+      initial = DateTime.now();
+      return Container();
     }
   }
 }

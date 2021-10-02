@@ -1,5 +1,6 @@
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Virement.dart';
+import 'package:budjet_app/convert/DateHelper.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/data/dao/VirementDAO.dart';
 import 'package:budjet_app/pages/add/PageAddVirement.dart';
@@ -28,6 +29,12 @@ class _PageVirementState extends State<PageVirement> {
     refresh();
   }
 
+  @override
+  void didUpdateWidget(covariant PageVirement oldWidget) {
+    dbLoaded = false;
+    super.didUpdateWidget(oldWidget);
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -45,24 +52,30 @@ class _PageVirementState extends State<PageVirement> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-                  builder: (context) => PageAddVirement(comptes: comptes)))
-              .then((value) async {
-            if (value != null && value is Virement) {
-              await dao.insert(value);
-              refresh();
-            }
-          });
-        },
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: comptes.length > 1
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(
+                        builder: (context) =>
+                            PageAddVirement(comptes: comptes)))
+                    .then((value) async {
+                  if (value != null && value is Virement) {
+                    await insertAll(value);
+                    refresh();
+                  }
+                });
+              },
+              child: const Icon(Icons.add, color: Colors.white),
+            )
+          : Container(),
       body: dbLoaded
           ? CustomMainPage(
               children: cards,
               scaffoldKey: _scaffoldKey,
+              text: comptes.length > 1
+                  ? 'Vide'
+                  : 'Il faut ajouter au moins 2 comptes.',
             )
           : Center(
               child: CircularProgressIndicator(),
@@ -70,48 +83,46 @@ class _PageVirementState extends State<PageVirement> {
     );
   }
 
-  separator(mois, annee) {
-    const spaceHeight = 5.0;
-    const spaceWidth = 15.0;
-    return Column(
-      children: [
-        SizedBox(height: spaceHeight),
-        Row(
-          children: [
-            Expanded(
-              child: Divider(color: Colors.black, height: 4),
-            ),
-            SizedBox(width: spaceWidth),
-            Text(
-              mois + ' ' + annee,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(width: spaceWidth),
-            Expanded(
-              child: Divider(color: Colors.black, height: 4),
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-        ),
-        SizedBox(height: spaceHeight),
-      ],
-    );
-  }
-
   refresh() async {
+    cards = [];
     List<Virement> virements = await dao.getAll();
     comptes = await compteDAO.getAll();
-    virements.forEach((element) {
-      cards.add(VirementCard(virement: element));
-    });
-    print(comptes);
+    print('virements $virements');
+    for (var element in virements) {
+      cards.add(VirementCard(
+        virement: element,
+        onDelete: delete,
+      ));
+    }
+    print(comptes.length);
     print(virements);
     setState(() {
       dbLoaded = true;
       print('setState');
     });
+  }
+
+  void delete(Virement v) async {
+    await dao.delete(v);
+    refresh();
+  }
+
+  Future<void> insertAll(Virement t) async {
+    DateTime tmp =
+        DateTime(t.dateInitial.year, t.dateInitial.month, t.dateInitial.day);
+    while (!tmp.isAfter(t.dateFin)) {
+      Virement tmpV = Virement(
+          depuis: t.depuis,
+          vers: t.vers,
+          montant: t.montant,
+          type: t.type,
+          id: t.id,
+          dateInitial: t.dateInitial,
+          dateFin: t.dateFin,
+          dateActuel: tmp);
+      await dao.insert(tmpV);
+      //on ajoute un mois
+      tmp = DateHelper.ajoutMois(tmp);
+    }
   }
 }

@@ -12,7 +12,8 @@ class TransactionBud extends ToDb {
   final int? id;
   final double montant;
   final String nom;
-  final DateTime date;
+  final DateTime dateInitial;
+  final DateTime dateActuel;
   final DateTime dateFin;
   final TypeTransaction type;
   final Compte compte;
@@ -23,7 +24,8 @@ class TransactionBud extends ToDb {
     required this.montant,
     required this.nom,
     required this.categorie,
-    required this.date,
+    required this.dateInitial,
+    required this.dateActuel,
     required this.dateFin,
     required this.type,
     required this.compte,
@@ -31,7 +33,7 @@ class TransactionBud extends ToDb {
 
   @override
   String toString() {
-    return 'Transaction(montant: $montant, nom: $nom, categorie: $categorie, date: $date, type: $type, compte: $compte)';
+    return 'Transaction(id: $id, montant: $montant, nom: $nom, categorie: $categorie, date: $dateActuel, dateInitial: $dateInitial, datefin: $dateFin, type: $type, compte: $compte)';
   }
 
   static Future<TransactionBud> fromDAO(Map<String, dynamic> map) async {
@@ -39,9 +41,11 @@ class TransactionBud extends ToDb {
     Compte cpt = await CompteDAO().getFromId(map['compte']);
     Categorie cat = await CategorieDAO().getFromId(map['categorie']);
     return TransactionBud(
+      id: map['idt'],
       compte: cpt,
       categorie: cat,
-      date: DateTime.parse(map['date']),
+      dateInitial: DateTime.parse(map['dateInitial']),
+      dateActuel: DateTime.parse(map['dateActuel']),
       dateFin: DateTime.parse(map['dateFin']),
       montant: map['montant'],
       nom: map['nom'],
@@ -55,7 +59,8 @@ class TransactionBud extends ToDb {
       'idt': id,
       'nom': nom,
       'montant': montant,
-      'date': date.toString(),
+      'dateInitial': dateInitial.toString(),
+      'dateActuel': dateActuel.toString(),
       'dateFin': dateFin.toString(),
       'type': type.index,
       'compte': compte.id,
@@ -72,10 +77,10 @@ class TransactionBud extends ToDb {
   }
 
   static void dateCroissant(List<TransactionBud> list) {
-    list.sort((a, b) => a.date.isBefore(b.date) ? -1 : 1);
+    list.sort((a, b) => a.dateActuel.isBefore(b.dateActuel) ? -1 : 1);
   }
 
   static void dateDecroissant(List<TransactionBud> list) {
-    list.sort((a, b) => a.date.isBefore(b.date) ? 1 : -1);
+    list.sort((a, b) => a.dateActuel.isBefore(b.dateActuel) ? 1 : -1);
   }
 }

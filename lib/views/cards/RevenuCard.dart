@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 
 class RevenuCard extends StatelessWidget {
   final Revenu revenu;
-
-  RevenuCard({required this.revenu});
+  final Function onDelete;
+  RevenuCard({required this.revenu, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +18,7 @@ class RevenuCard extends StatelessWidget {
         print('modify this $revenu');
       },
       delete: () {
+        onDelete(revenu);
         print('delete this $revenu');
       },
       child: Column(
@@ -84,7 +85,7 @@ class RevenuCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                 ),
               ),
-              Text("le " + DateFormat('dd-MM-yyyy').format(revenu.date),
+              Text("le " + DateFormat('dd/MM/yyyy').format(revenu.dateActuel),
                   style: TextStyle(fontSize: 13)),
             ],
           ),

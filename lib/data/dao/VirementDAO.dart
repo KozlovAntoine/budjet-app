@@ -69,4 +69,18 @@ class VirementDAO extends DAO<Virement> {
     final db = await DatabaseBud.instance.database;
     db.update(table, t.toMap());
   }
+
+  Future<List<Virement>> getAllFromDate(DateTime date) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where:
+            "dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')");
+    List<Virement> transactions = [];
+    Virement tmp;
+    for (var element in maps) {
+      tmp = await Virement.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
 }

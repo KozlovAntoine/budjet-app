@@ -6,8 +6,8 @@ import 'package:intl/intl.dart';
 
 class VirementCard extends StatelessWidget {
   final Virement virement;
-
-  VirementCard({required this.virement});
+  final Function onDelete;
+  VirementCard({required this.virement, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +19,7 @@ class VirementCard extends StatelessWidget {
         print('modify this ${virement.toString()}');
       },
       delete: () {
+        onDelete(virement);
         print('delete this ${virement.toString()}');
       },
       child: Column(
@@ -30,14 +31,24 @@ class VirementCard extends StatelessWidget {
           */
           _centeredText(
               'Virement de ' + virement.montant.toStringAsFixed(2) + '€'),
-          _bankInfo(virement.depuis),
-          _transfertInfo(virement.depuis, -virement.montant),
-          _centeredText('Vers'),
+          SizedBox(height: 10),
+          //_transfertInfo(virement.depuis, -virement.montant),
+          Row(
+            children: [
+              _bankInfo(virement.depuis),
+              Spacer(),
+              _centeredText('Vers'),
+              Spacer(),
+              _bankInfoRight(virement.vers),
+            ],
+          ),
+          SizedBox(height: 10),
+
           /**
           * Informations du bas
           */
-          _bankInfo(virement.vers),
-          _transfertInfo(virement.vers, virement.montant),
+
+          //_transfertInfo(virement.vers, virement.montant),
           /**
           * Date
           */
@@ -45,7 +56,7 @@ class VirementCard extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                'le ' + DateFormat('dd-MM-yyyy').format(virement.date),
+                'le ' + DateFormat('dd/MM/yyyy').format(virement.dateActuel),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w200,
@@ -63,8 +74,8 @@ class VirementCard extends StatelessWidget {
       children: [
         Container(
           //Cercle
-          width: 70,
-          height: 70,
+          width: 40,
+          height: 40,
           decoration: new BoxDecoration(
             color: compte.color,
             shape: BoxShape.circle,
@@ -92,12 +103,46 @@ class VirementCard extends StatelessWidget {
     );
   }
 
+  _bankInfoRight(Compte compte) {
+    return Row(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              compte.livret.name,
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 5),
+            Text(
+              compte.banque,
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          ],
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Container(
+          //Cercle
+          width: 40,
+          height: 40,
+          decoration: new BoxDecoration(
+            color: compte.color,
+            shape: BoxShape.circle,
+          ),
+        ),
+      ],
+    );
+  }
+
   _transfertInfo(Compte compte, double montant) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          compte.soldeInitial.toStringAsFixed(2) + '€',
+          compte.soldeActuel.toStringAsFixed(2) + '€',
           style: TextStyle(
             color: Colors.red,
             fontSize: 24,
@@ -109,7 +154,7 @@ class VirementCard extends StatelessWidget {
           size: 40,
         ),
         Text(
-          (compte.soldeInitial + montant).toStringAsFixed(2) + '€',
+          (compte.soldeActuel + montant).toStringAsFixed(2) + '€',
           style: TextStyle(
             color: Colors.green,
             fontSize: 24,

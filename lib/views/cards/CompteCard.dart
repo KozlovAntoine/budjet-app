@@ -7,8 +7,8 @@ import 'package:intl/intl.dart';
 class ComptesCard extends StatelessWidget {
   final Compte compte;
   final TransactionBud? transaction;
-  final Function delete;
-  ComptesCard({required this.compte, this.transaction, required this.delete});
+  final Function onDelete;
+  ComptesCard({required this.compte, this.transaction, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -20,64 +20,60 @@ class ComptesCard extends StatelessWidget {
         print('modify this ${transaction.toString()}');
       },
       delete: () {
-        delete(compte);
+        onDelete(compte);
         print('delete this ${transaction.toString()}');
       },
-      child: Material(
-        child: InkWell(
-          child: Column(
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            //the top of the card
             children: [
-              Row(
+              Container(
+                width: 70,
+                height: 70,
+                decoration: new BoxDecoration(
+                  color: compte.color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: 10),
+              Column(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                //the top of the card
+                crossAxisAlignment: CrossAxisAlignment.start,
+                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: new BoxDecoration(
-                      color: compte.color,
-                      shape: BoxShape.circle,
-                    ),
+                  Text(
+                    compte.soldeActuel.toStringAsFixed(2) + '€',
+                    style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 24),
                   ),
-                  SizedBox(width: 10),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        compte.soldeInitial.toStringAsFixed(2) + '€',
-                        style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 24),
-                      ),
-                      SizedBox(height: 3),
-                      Text(
-                        compte.livret.name,
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      SizedBox(height: 3),
-                      Text(
-                        compte.banque,
-                        style: TextStyle(fontSize: 18, color: Colors.black54),
-                      ),
-                    ],
+                  SizedBox(height: 3),
+                  Text(
+                    compte.livret.name,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    compte.banque,
+                    style: TextStyle(fontSize: 18, color: Colors.black54),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
-              Divider(
-                color: Colors.black,
-                height: 2.0,
-              ),
-              SizedBox(height: 5),
-              //BOTTOM OF THE CARD
-              bottom(),
             ],
           ),
-        ),
+          SizedBox(height: 10),
+          Divider(
+            color: Colors.black,
+            height: 2.0,
+          ),
+          SizedBox(height: 5),
+          //BOTTOM OF THE CARD
+          bottom(),
+        ],
       ),
     );
   }
@@ -108,7 +104,10 @@ class ComptesCard extends StatelessWidget {
               children: [
                 Text(transaction!.categorie.nom.toString(),
                     style: TextStyle(fontSize: 18)),
-                Text("le " + DateFormat('dd-MM-yyyy').format(transaction!.date),
+                Text(
+                    "le " +
+                        DateFormat('dd/MM/yyyy')
+                            .format(transaction!.dateActuel),
                     style: TextStyle(fontSize: 13)),
               ],
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -6,15 +6,15 @@ import 'package:budjet_app/classes/Livret.dart';
 class Compte extends ToDb {
   int? id;
   final double soldeInitial;
+  double soldeActuel;
   final String banque;
   final Livret livret;
   final Color color;
   final DateTime lastModification;
-  int? transactionId;
 
   Compte({
     this.id,
-    this.transactionId,
+    required this.soldeActuel,
     required this.soldeInitial,
     required this.livret,
     required this.banque,
@@ -24,17 +24,17 @@ class Compte extends ToDb {
 
   @override
   String toString() {
-    return 'Compte(id $id, solde: $soldeInitial, banque: $banque, livret: $livret, color: $color, lastModification: $lastModification, transactionId: $transactionId)';
+    return 'Compte(id $id, soldeInitial: $soldeInitial, soldeActuel: $soldeActuel, banque: $banque, livret: $livret, color: $color, lastModification: $lastModification)';
   }
 
-  static Compte fromDAO(Map<String, dynamic> map) {
+  static Compte fromDAO(Map<String, dynamic> map, double soldeActuel) {
     return Compte(
         id: map['idcpt'],
         soldeInitial: map['solde'],
+        soldeActuel: map['solde'] + soldeActuel,
         livret: Livret.stringToLivret(map['livret']),
         banque: map['nom'],
         color: Color(map['color']),
-        transactionId: map['transactionId'],
         lastModification: DateTime.parse(map['lastModification']));
   }
 
@@ -46,7 +46,6 @@ class Compte extends ToDb {
       'livret': livret.name,
       'color': color.value,
       'lastModification': lastModification.toString(),
-      'transactionId': transactionId,
     };
   }
 }

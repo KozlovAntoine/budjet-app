@@ -9,7 +9,9 @@ class Virement extends ToDb {
   final Compte depuis;
   final Compte vers;
   final double montant;
-  final DateTime date;
+  final DateTime dateActuel;
+  final DateTime dateInitial;
+  final DateTime dateFin;
   final TypeTransaction type;
 
   Virement({
@@ -17,7 +19,9 @@ class Virement extends ToDb {
     required this.depuis,
     required this.vers,
     required this.montant,
-    required this.date,
+    required this.dateActuel,
+    required this.dateInitial,
+    required this.dateFin,
     required this.type,
   });
 
@@ -26,7 +30,9 @@ class Virement extends ToDb {
     Compte vrs = await CompteDAO().getFromId(map['vers']);
     return Virement(
       id: map['idv'],
-      date: DateTime.parse(map['date']),
+      dateActuel: DateTime.parse(map['dateActuel']),
+      dateInitial: DateTime.parse(map['dateInitial']),
+      dateFin: DateTime.parse(map['dateFin']),
       depuis: dps,
       vers: vrs,
       montant: map['montant'],
@@ -41,7 +47,9 @@ class Virement extends ToDb {
       'type': type.index,
       'depuis': depuis.id,
       'vers': vers.id,
-      'date': date.toString(),
+      'dateInitial': dateInitial.toString(),
+      'dateActuel': dateActuel.toString(),
+      'dateFin': dateFin.toString(),
       'montant': montant,
     };
   }

@@ -3,6 +3,7 @@ import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Revenu.dart';
 import 'package:budjet_app/classes/TypeTransaction.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
+import 'package:budjet_app/views/cards/DateCard.dart';
 import 'package:flutter/material.dart';
 
 class PageAddRevenu extends StatefulWidget {
@@ -20,17 +21,20 @@ class _PageAddRevenuState extends State<PageAddRevenu> {
   late Compte compteSelection;
   Color currentColor = Color(Colors.blue.value);
   double nouveauSolde = 0;
+  late DateTime initial, end;
 
   @override
   void initState() {
     super.initState();
+    initial = DateTime.now();
+    end = DateTime.now();
     compteSelection = widget.comptes.first;
-    nouveauSolde = compteSelection.soldeInitial;
+    nouveauSolde = compteSelection.soldeActuel;
     montant.addListener(() {
       try {
         double tmp = double.parse(montant.text);
         setState(() {
-          nouveauSolde = compteSelection.soldeInitial + tmp;
+          nouveauSolde = compteSelection.soldeActuel + tmp;
         });
       } on Exception {
         print('error');
@@ -40,6 +44,16 @@ class _PageAddRevenuState extends State<PageAddRevenu> {
 
   void changeColor(Color color) {
     setState(() => currentColor = color);
+  }
+
+  void changerInitial(DateTime time) {
+    this.initial = time;
+    print('changement initial $initial');
+  }
+
+  void changerEnd(DateTime time) {
+    this.end = time;
+    print('changement end $end');
   }
 
   TypeTransaction type = TypeTransaction.IMMEDIAT;
@@ -104,23 +118,36 @@ class _PageAddRevenuState extends State<PageAddRevenu> {
                 main: _typeVirement(),
                 context: context,
               ),
+              _selectionDate(),
               ColorPick(onChange: changeColor),
-              TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Revenu revenu = Revenu(
-                      montant: double.parse(montant.text),
-                      nom: name.text,
-                      date: DateTime.now(),
-                      dateFin: DateTime.now().add(Duration(days: 9999)),
-                      type: type,
-                      compte: compteSelection,
-                      color: currentColor,
-                    );
-                    Navigator.of(context).pop(revenu);
-                  }
-                },
-                child: Text('Enregistrer'),
+              ButtonEnregister(
+                widget: TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      Revenu revenu = Revenu(
+                        montant: double.parse(montant.text),
+                        nom: name.text,
+                        dateInitial: initial,
+                        dateActuel: initial,
+                        dateFin: type == TypeTransaction.PERMANANT &&
+                                end.isAfter(initial)
+                            ? end
+                            : initial,
+                        type: type,
+                        compte: compteSelection,
+                        color: currentColor,
+                      );
+                      Navigator.of(context).pop(revenu);
+                    }
+                  },
+                  child: Text(
+                    'Enregistrer',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                  ),
+                ),
               ),
             ],
           ),
@@ -157,7 +184,7 @@ class _PageAddRevenuState extends State<PageAddRevenu> {
                 Spacer(),
                 Text(
                   'Solde actuel : ' +
-                      compte.soldeInitial.toStringAsFixed(2) +
+                      compte.soldeActuel.toStringAsFixed(2) +
                       '€',
                   style: TextStyle(
                     color: Colors.black,
@@ -206,5 +233,26 @@ class _PageAddRevenuState extends State<PageAddRevenu> {
       }).toList(),
       dropdownColor: Colors.white,
     );
+  }
+
+  _selectionDate() {
+    if (type == TypeTransaction.PERMANANT) {
+      return DateCard(
+        changeInitialDate: changerInitial,
+        changeEndDate: changerEnd,
+        afficherEnd: true,
+        init: initial,
+      );
+    } else if (type == TypeTransaction.DIFFERE) {
+      return DateCard(
+        changeInitialDate: changerInitial,
+        changeEndDate: changerEnd,
+        afficherEnd: false,
+        init: initial,
+      );
+    } else {
+      initial = DateTime.now();
+      return Container();
+    }
   }
 }

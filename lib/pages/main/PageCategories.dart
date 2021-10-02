@@ -26,6 +26,12 @@ class _PageCategoriesState extends State<PageCategories> {
   }
 
   @override
+  void didUpdateWidget(covariant PageCategories oldWidget) {
+    categorieLoaded = false;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     print('build');
     return Scaffold(
@@ -70,14 +76,24 @@ class _PageCategoriesState extends State<PageCategories> {
   refresh() async {
     widgets = [];
     List<Categorie> categories = await dao.getAll();
-    categories.forEach((element) {
-      widgets.add(CategorieCard(categorie: element, pourcentage: 100));
-    });
+    for (var element in categories) {
+      double p = await dao.getPourcentage(element);
+      widgets.add(CategorieCard(
+        categorie: element,
+        pourcentage: p,
+        onDelete: delete,
+      ));
+    }
     print('dddddd');
     print(categories);
     setState(() {
       categorieLoaded = true;
       print('setState');
     });
+  }
+
+  void delete(Categorie c) async {
+    await dao.delete(c);
+    refresh();
   }
 }

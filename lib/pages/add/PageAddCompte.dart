@@ -136,23 +136,32 @@ class PageAddCompteState extends State<PageAddCompte> {
                 context: context,
               ),
               ColorPick(onChange: changeColor),
-              TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                    print(soldeController.text);
-                    Compte compte = Compte(
-                      banque: banqueController.text,
-                      color: currentColor,
-                      livret: livretSelection,
-                      lastModification: DateTime.now(),
-                      soldeInitial: double.parse(soldeController.text),
-                    );
-                    Navigator.of(context).pop(compte);
-                  }
-                },
-                child: Text('Enregistrer'),
+              ButtonEnregister(
+                widget: TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // If the form is valid, display a snackbar. In the real world,
+                      // you'd often call a server or save the information in a database.
+                      print(soldeController.text);
+                      Compte compte = Compte(
+                        banque: banqueController.text,
+                        color: currentColor,
+                        livret: livretSelection,
+                        lastModification: DateTime.now(),
+                        soldeInitial: double.parse(soldeController.text),
+                        soldeActuel: double.parse(soldeController.text),
+                      );
+                      Navigator.of(context).pop(compte);
+                    }
+                  },
+                  child: Text(
+                    'Enregistrer',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                  ),
+                ),
               ),
             ],
           ),

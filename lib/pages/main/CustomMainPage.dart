@@ -10,6 +10,7 @@ class CustomMainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onHorizontalDragUpdate: (event) {
         if (event.delta.dx > 0) scaffoldKey.currentState!.openDrawer();
       },

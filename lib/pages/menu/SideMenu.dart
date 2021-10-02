@@ -21,10 +21,7 @@ class SideMenu extends StatelessWidget {
               Icons.account_balance,
               color: iconColor,
             ),
-            title: Text(
-              "Comptes",
-              style: TextStyle(fontSize: 18),
-            ),
+            title: menuText("Mes comptes"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -38,7 +35,7 @@ class SideMenu extends StatelessWidget {
               Icons.apps,
               color: iconColor,
             ),
-            title: Text("Categories"),
+            title: menuText("Mes catégories"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -49,10 +46,10 @@ class SideMenu extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(
-              Icons.compare_arrows,
+              Icons.euro,
               color: iconColor,
             ),
-            title: Text("Revenus"),
+            title: menuText("Mes revenus"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -63,10 +60,10 @@ class SideMenu extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(
-              Icons.euro,
+              Icons.compare_arrows,
               color: iconColor,
             ),
-            title: Text("Virements"),
+            title: menuText("Mes virements"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -77,10 +74,10 @@ class SideMenu extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(
-              Icons.compare_arrows,
+              Icons.double_arrow,
               color: iconColor,
             ),
-            title: Text("Transactions"),
+            title: menuText("Mes transactions"),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -90,6 +87,16 @@ class SideMenu extends StatelessWidget {
           ),
           Divider(),
         ],
+      ),
+    );
+  }
+
+  Text menuText(String txt) {
+    return Text(
+      txt,
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 16,
       ),
     );
   }

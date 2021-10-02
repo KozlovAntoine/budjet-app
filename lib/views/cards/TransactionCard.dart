@@ -5,11 +5,11 @@ import 'package:intl/intl.dart';
 
 class TransactionCard extends StatelessWidget {
   final TransactionBud transaction;
-  final Function delete;
+  final Function onDelete;
 
   TransactionCard({
     required this.transaction,
-    required this.delete,
+    required this.onDelete,
   });
 
   @override
@@ -22,7 +22,7 @@ class TransactionCard extends StatelessWidget {
         print('modify this $transaction');
       },
       delete: () {
-        delete(transaction);
+        onDelete(transaction);
         print('delete this $transaction');
       },
       child: Column(
@@ -99,7 +99,9 @@ class TransactionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                 ),
               ),
-              Text("le " + DateFormat('dd-MM-yyyy').format(transaction.date),
+              Text(
+                  "le " +
+                      DateFormat('dd/MM/yyyy').format(transaction.dateActuel),
                   style: TextStyle(fontSize: 13)),
             ],
           ),

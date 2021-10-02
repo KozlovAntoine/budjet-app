@@ -1,6 +1,7 @@
 import 'package:budjet_app/animation/snack.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Revenu.dart';
+import 'package:budjet_app/convert/DateHelper.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/data/dao/RevenuDAO.dart';
 import 'package:budjet_app/pages/add/PageAddRevenu.dart';
@@ -8,6 +9,7 @@ import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/RevenuCard.dart';
 import 'package:flutter/material.dart';
 
+import 'BottomNav.dart';
 import 'CustomMainPage.dart';
 
 class PageRevenus extends StatefulWidget {
@@ -21,14 +23,22 @@ class _PageRevenusState extends State<PageRevenus> {
   late CompteDAO compteDAO;
   List<RevenuCard> widgets = [];
   List<Compte> comptes = [];
+  late DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
+    selectedDate = DateTime.now();
     dao = RevenuDAO();
     compteDAO = CompteDAO();
     print('init');
     refresh();
+  }
+
+  @override
+  void didUpdateWidget(covariant PageRevenus oldWidget) {
+    dbLoaded = false;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -47,6 +57,13 @@ class _PageRevenusState extends State<PageRevenus> {
           ),
         ),
       ),
+      bottomNavigationBar: BottomNav(
+        initialDate: DateTime.now(),
+        changeDate: (date) {
+          selectedDate = date;
+          refresh();
+        },
+      ),
       floatingActionButton: comptes.isEmpty
           ? Container()
           : FloatingActionButton(
@@ -59,8 +76,7 @@ class _PageRevenusState extends State<PageRevenus> {
                     .then((value) async {
                   if (value != null && value is Revenu) {
                     print(value);
-                    Snack(context, value.toString());
-                    await dao.insert(value);
+                    await insertAll(value);
                     refresh();
                   }
                 });
@@ -81,15 +97,43 @@ class _PageRevenusState extends State<PageRevenus> {
 
   refresh() async {
     widgets = [];
-    List<Revenu> revenues = await dao.getAll();
+    List<Revenu> revenues = await dao.getAllFromDate(selectedDate);
     comptes = await compteDAO.getAll();
     for (var element in revenues) {
-      widgets.add(RevenuCard(revenu: element));
+      widgets.add(RevenuCard(
+        revenu: element,
+        onDelete: delete,
+      ));
     }
     print(revenues);
     setState(() {
       dbLoaded = true;
       print('setstate');
     });
+  }
+
+  void delete(Revenu r) async {
+    await dao.delete(r);
+    refresh();
+  }
+
+  Future<void> insertAll(Revenu t) async {
+    DateTime tmp =
+        DateTime(t.dateInitial.year, t.dateInitial.month, t.dateInitial.day);
+    while (!tmp.isAfter(t.dateFin)) {
+      Revenu r = Revenu(
+          color: t.color,
+          compte: t.compte,
+          montant: t.montant,
+          nom: t.nom,
+          type: t.type,
+          id: t.id,
+          dateInitial: t.dateInitial,
+          dateFin: t.dateFin,
+          dateActuel: tmp);
+      await dao.insert(r);
+      //on ajoute un mois
+      tmp = DateHelper.ajoutMois(tmp);
+    }
   }
 }

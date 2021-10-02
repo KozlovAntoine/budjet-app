@@ -39,6 +39,7 @@ class CustomCard extends StatelessWidget {
             bottom: 5,
           ),
           child: Material(
+            color: Colors.transparent,
             child: InkWell(
               child: child,
               onLongPress: () {
@@ -48,14 +49,14 @@ class CustomCard extends StatelessWidget {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          ListTile(
+                          /*ListTile(
                             leading: new Icon(Icons.edit),
                             title: new Text('Modifier'),
                             onTap: () {
                               modify();
                               Navigator.pop(context);
                             },
-                          ),
+                          ),*/
                           ListTile(
                             leading: new Icon(Icons.delete),
                             title: new Text('Supprimer'),
@@ -96,6 +97,7 @@ class CustomAddCarte extends StatelessWidget {
         height: height,
         padding: EdgeInsets.only(left: 8, right: 8, top: 6, bottom: 6),
         child: Row(
+          mainAxisSize: MainAxisSize.max,
           children: [
             _prefixeIcon(icon),
             SizedBox(width: 10),
@@ -190,4 +192,21 @@ class CustomAddCarteFieldWithEntry extends CustomAddCarte {
             validator: validator,
           ),
         );
+}
+
+class ButtonEnregister extends StatelessWidget {
+  final Widget widget;
+  ButtonEnregister({required this.widget});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: widget,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.all(
+          Radius.circular(10),
+        ),
+      ),
+    );
+  }
 }

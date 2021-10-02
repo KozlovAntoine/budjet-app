@@ -1,5 +1,6 @@
 import 'package:budjet_app/pages/main/PageComptes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'data/database_bud.dart';
 
@@ -50,6 +51,14 @@ class MyAppState extends State<MyApp> {
       },
     );
     return MaterialApp(
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('fr', ''),
+        ],
         debugShowCheckedModeBanner: false,
         title: 'Budjet',
         theme: ThemeData(

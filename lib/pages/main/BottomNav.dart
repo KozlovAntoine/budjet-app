@@ -1,3 +1,4 @@
+import 'package:budjet_app/convert/DateHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -39,7 +40,7 @@ class _BottomNavState extends State<BottomNav> {
                 widget.changeDate(current);
               },
             ),
-            Text(DateFormat.yMMMM().format(current)),
+            Text(DateHelper.moisAnnee.format(current)),
             IconButton(
               tooltip: 'Mois suivant',
               icon: const Icon(Icons.arrow_right),

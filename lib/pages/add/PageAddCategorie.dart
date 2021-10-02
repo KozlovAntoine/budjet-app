@@ -122,20 +122,28 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
                     onTap: () => _pickIcon(),
                   ),
                   context: context),
-              TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Categorie categorie = Categorie(
-                      nom: name.text,
-                      plafond: double.parse(plafond.text),
-                      color: currentColor,
-                      icon: _icon,
-                    );
-                    print(categorie);
-                    Navigator.of(context).pop(categorie);
-                  }
-                },
-                child: Text('Enregistrer'),
+              ButtonEnregister(
+                widget: TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      Categorie categorie = Categorie(
+                        nom: name.text,
+                        plafond: double.parse(plafond.text),
+                        color: currentColor,
+                        icon: _icon,
+                      );
+                      print(categorie);
+                      Navigator.of(context).pop(categorie);
+                    }
+                  },
+                  child: Text(
+                    'Enregistrer',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                  ),
+                ),
               ),
             ],
           ),

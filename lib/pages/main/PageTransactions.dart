@@ -1,6 +1,7 @@
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/convert/DateHelper.dart';
 import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/data/dao/TransactionDAO.dart';
@@ -35,6 +36,12 @@ class _PageTransactionState extends State<PageTransaction> {
     categorieDAO = CategorieDAO();
     selectedDate = DateTime.now();
     refresh();
+  }
+
+  @override
+  void didUpdateWidget(covariant PageTransaction oldWidget) {
+    dbLoaded = false;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -83,25 +90,7 @@ class _PageTransactionState extends State<PageTransaction> {
                       )))
               .then((newTransaction) async {
             if (newTransaction != null && newTransaction is TransactionBud) {
-              int transactionId = await dao.insert(newTransaction);
-              print('new id : $transactionId');
-              Compte compte =
-                  await compteDAO.getFromId(newTransaction.compte.id!);
-              if (compte.transactionId == null) {
-                compte.transactionId = transactionId;
-                print('compte:$compte');
-                await compteDAO.update(compte);
-                print('Update');
-              } else {
-                TransactionBud transactionFromCompte =
-                    await dao.getFromId(compte.transactionId!);
-                if (newTransaction.date.isAfter(transactionFromCompte.date)) {
-                  compte.transactionId = transactionId;
-                  print('compte:$compte');
-                  await compteDAO.update(compte);
-                  print('Update');
-                }
-              }
+              await insertAll(newTransaction);
               refresh();
             }
           });
@@ -114,29 +103,43 @@ class _PageTransactionState extends State<PageTransaction> {
 
   refresh() async {
     widgets = [];
-    print('date refresh : $selectedDate');
-    print('all');
-    print(await dao.getAll());
     List<TransactionBud> transactions = await dao.getAllFromDate(selectedDate);
-    print('tr : $transactions');
     comptes = await compteDAO.getAll();
     categories = await categorieDAO.getAll();
     TransactionBud.dateDecroissant(transactions);
-    transactions.forEach((element) {
+    for (var element in transactions) {
       widgets.add(TransactionCard(
         transaction: element,
-        delete: delete,
+        onDelete: delete,
       ));
-    });
+    }
     setState(() {
       dbLoaded = true;
-      print('setState');
     });
   }
 
+  Future<void> insertAll(TransactionBud t) async {
+    DateTime tmp =
+        DateTime(t.dateInitial.year, t.dateInitial.month, t.dateInitial.day);
+    while (!tmp.isAfter(t.dateFin)) {
+      TransactionBud tmpTransac = TransactionBud(
+          categorie: t.categorie,
+          compte: t.compte,
+          montant: t.montant,
+          nom: t.nom,
+          type: t.type,
+          id: t.id,
+          dateInitial: t.dateInitial,
+          dateFin: t.dateFin,
+          dateActuel: tmp);
+      await dao.insert(tmpTransac);
+      //on ajoute un mois
+      tmp = DateHelper.ajoutMois(tmp);
+    }
+  }
+
   void delete(TransactionBud t) async {
-    print('delete :$t');
     await dao.delete(t);
-    await refresh();
+    refresh();
   }
 }

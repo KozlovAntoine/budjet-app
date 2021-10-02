@@ -5,6 +5,7 @@ import 'DAO.dart';
 
 class CategorieDAO implements DAO<Categorie> {
   final String table = DatabaseBud.categorie;
+  final String tableTransaction = DatabaseBud.transaction;
 
   @override
   Future<void> delete(Categorie t) async {
@@ -39,5 +40,21 @@ class CategorieDAO implements DAO<Categorie> {
   Future<void> update(Categorie t) async {
     final db = await DatabaseBud.instance.database;
     db.update(table, t.toMap());
+  }
+
+  Future<double> getPourcentage(Categorie c) async {
+    final db = await DatabaseBud.instance.database;
+    DateTime date = DateTime.now();
+    final List<Map<String, dynamic>> maps = await db.query(tableTransaction,
+        columns: ['montant'],
+        where:
+            "categorie = ? AND dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')",
+        whereArgs: [c.id]);
+    double total = 0;
+    double max = c.plafond;
+    for (var element in maps) {
+      total += element['montant'] as num;
+    }
+    return (total * 100) / max;
   }
 }

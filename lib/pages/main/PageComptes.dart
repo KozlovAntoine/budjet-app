@@ -3,7 +3,6 @@ import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/data/dao/TransactionDAO.dart';
 import 'package:budjet_app/pages/add/PageAddCompte.dart';
-import 'package:budjet_app/pages/main/BottomNav.dart';
 import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/CompteCard.dart';
@@ -28,6 +27,12 @@ class _MesComptesPageState extends State<PageCompte> {
     transactionDAO = TransactionDAO();
     compteLoaded = false;
     refresh();
+  }
+
+  @override
+  void didUpdateWidget(covariant PageCompte oldWidget) {
+    compteLoaded = false;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -73,36 +78,12 @@ class _MesComptesPageState extends State<PageCompte> {
   refresh() async {
     widgets = [];
     List<Compte> comptes = await dao.getAll();
-    print('debut refresh');
     for (var element in comptes) {
-      List<TransactionBud> tmp =
-          await transactionDAO.transactionUnCompteJusquaAujourdhui(element.id!);
-      double total = 0;
-      tmp.forEach((e) {
-        total += e.montant;
-      });
-      print('total:$total');
-      if (element.transactionId != null) {
-        print('id:${element.transactionId}');
-        TransactionBud trans =
-            await transactionDAO.getFromId(element.transactionId!);
-        print('on recup $trans');
-        widgets.add(ComptesCard(
-          delete: delete,
-          compte: element,
-          transaction: trans,
-        ));
-      } else {
-        print('element.transactionId VIDE');
-        widgets.add(ComptesCard(
-          delete: delete,
-          compte: element,
-        ));
-      }
+      widgets.add(ComptesCard(
+        onDelete: delete,
+        compte: element,
+      ));
     }
-    print('dddddd');
-    print(comptes);
-    print('fin refresh');
     setState(() {
       compteLoaded = true;
       print('setState');
@@ -111,6 +92,6 @@ class _MesComptesPageState extends State<PageCompte> {
 
   void delete(Compte c) async {
     await dao.delete(c);
-    await refresh();
+    refresh();
   }
 }

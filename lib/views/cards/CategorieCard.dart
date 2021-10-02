@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 class CategorieCard extends StatelessWidget {
   final Categorie categorie;
   final double pourcentage;
-  CategorieCard({required this.categorie, required this.pourcentage});
+  final Function onDelete;
+  CategorieCard(
+      {required this.categorie,
+      required this.pourcentage,
+      required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +22,7 @@ class CategorieCard extends StatelessWidget {
         print('modify this $categorie');
       },
       delete: () {
+        onDelete(categorie);
         print('delete this $categorie');
       },
       child: Column(

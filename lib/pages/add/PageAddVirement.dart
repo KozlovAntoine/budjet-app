@@ -2,6 +2,7 @@ import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/TypeTransaction.dart';
 import 'package:budjet_app/classes/Virement.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
+import 'package:budjet_app/views/cards/DateCard.dart';
 import 'package:flutter/material.dart';
 
 class PageAddVirement extends StatefulWidget {
@@ -17,27 +18,36 @@ class _PageAddVirementState extends State<PageAddVirement> {
   late Compte expediteur;
   late Compte receveur;
   TypeTransaction type = TypeTransaction.IMMEDIAT;
-  double nouveauSoldeExpediteur = 0;
-  double nouveauSoldeReceveur = 0;
+  double montantTransfert = 0;
+  late DateTime initial, end;
 
   @override
   void initState() {
     super.initState();
+    initial = DateTime.now();
+    end = DateTime.now();
     expediteur = widget.comptes.first;
-    nouveauSoldeExpediteur = expediteur.soldeInitial;
     receveur = widget.comptes.last;
-    nouveauSoldeReceveur = receveur.soldeInitial;
     montant.addListener(() {
       try {
         double tmp = double.parse(montant.text);
         setState(() {
-          nouveauSoldeExpediteur = expediteur.soldeInitial - tmp;
-          nouveauSoldeReceveur = receveur.soldeInitial + tmp;
+          montantTransfert = tmp;
         });
       } on Exception {
         print('error');
       }
     });
+  }
+
+  void changerInitial(DateTime time) {
+    this.initial = time;
+    print('changement initial $initial');
+  }
+
+  void changerEnd(DateTime time) {
+    this.end = time;
+    print('changement end $end');
   }
 
   @override
@@ -95,19 +105,33 @@ class _PageAddVirementState extends State<PageAddVirement> {
                 main: _typeVirement(),
                 context: context,
               ),
-              TextButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Virement virement = Virement(
-                        date: DateTime.now(),
-                        depuis: expediteur,
-                        vers: receveur,
-                        montant: double.parse(montant.text),
-                        type: type);
-                    Navigator.of(context).pop(virement);
-                  }
-                },
-                child: Text('Enregistrer'),
+              _selectionDate(),
+              ButtonEnregister(
+                widget: TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      Virement virement = Virement(
+                          dateInitial: initial,
+                          dateActuel: initial,
+                          dateFin: type == TypeTransaction.PERMANANT &&
+                                  end.isAfter(initial)
+                              ? end
+                              : initial,
+                          depuis: expediteur,
+                          vers: receveur,
+                          montant: double.parse(montant.text),
+                          type: type);
+                      Navigator.of(context).pop(virement);
+                    }
+                  },
+                  child: Text(
+                    'Enregistrer',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20),
+                  ),
+                ),
               ),
             ],
           ),
@@ -129,7 +153,12 @@ class _PageAddVirementState extends State<PageAddVirement> {
       underline: Container(),
       onChanged: (newValue) {
         setState(() {
-          expediteur = newValue!;
+          if (newValue! != receveur)
+            expediteur = newValue;
+          else {
+            receveur = expediteur;
+            expediteur = newValue;
+          }
         });
       },
       items: widget.comptes.map<DropdownMenuItem<Compte>>((compte) {
@@ -144,7 +173,7 @@ class _PageAddVirementState extends State<PageAddVirement> {
                 Spacer(),
                 Text(
                   'Solde actuel : ' +
-                      compte.soldeInitial.toStringAsFixed(2) +
+                      compte.soldeActuel.toStringAsFixed(2) +
                       '€',
                   style: TextStyle(
                     color: Colors.black,
@@ -155,7 +184,8 @@ class _PageAddVirementState extends State<PageAddVirement> {
                 Spacer(),
                 Text(
                   'Nouveau solde : ' +
-                      nouveauSoldeExpediteur.toStringAsFixed(2) +
+                      (compte.soldeActuel - montantTransfert)
+                          .toStringAsFixed(2) +
                       '€',
                   style: TextStyle(
                     color: Colors.black,
@@ -185,7 +215,12 @@ class _PageAddVirementState extends State<PageAddVirement> {
       underline: Container(),
       onChanged: (newValue) {
         setState(() {
-          receveur = newValue!;
+          if (newValue! != expediteur)
+            receveur = newValue;
+          else {
+            expediteur = receveur;
+            receveur = newValue;
+          }
         });
       },
       items: widget.comptes.map<DropdownMenuItem<Compte>>((compte) {
@@ -200,7 +235,7 @@ class _PageAddVirementState extends State<PageAddVirement> {
                 Spacer(),
                 Text(
                   'Solde actuel : ' +
-                      compte.soldeInitial.toStringAsFixed(2) +
+                      compte.soldeActuel.toStringAsFixed(2) +
                       '€',
                   style: TextStyle(
                     color: Colors.black,
@@ -211,7 +246,8 @@ class _PageAddVirementState extends State<PageAddVirement> {
                 Spacer(),
                 Text(
                   'Nouveau solde : ' +
-                      nouveauSoldeReceveur.toStringAsFixed(2) +
+                      (compte.soldeActuel + montantTransfert)
+                          .toStringAsFixed(2) +
                       '€',
                   style: TextStyle(
                     color: Colors.black,
@@ -246,10 +282,31 @@ class _PageAddVirementState extends State<PageAddVirement> {
       items: TypeTransaction.values.map<DropdownMenuItem<TypeTransaction>>((t) {
         return DropdownMenuItem<TypeTransaction>(
           value: t,
-          child: Text(t.toString().split('.')[1]),
+          child: Text(TypeTransactionHelper.typeToString(t)),
         );
       }).toList(),
       dropdownColor: Colors.white,
     );
+  }
+
+  _selectionDate() {
+    if (type == TypeTransaction.PERMANANT) {
+      return DateCard(
+        changeInitialDate: changerInitial,
+        changeEndDate: changerEnd,
+        afficherEnd: true,
+        init: initial,
+      );
+    } else if (type == TypeTransaction.DIFFERE) {
+      return DateCard(
+        changeInitialDate: changerInitial,
+        changeEndDate: changerEnd,
+        afficherEnd: false,
+        init: initial,
+      );
+    } else {
+      initial = DateTime.now();
+      return Container();
+    }
   }
 }

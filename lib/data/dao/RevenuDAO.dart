@@ -56,4 +56,18 @@ class RevenuDAO extends DAO<Revenu> {
     final db = await DatabaseBud.instance.database;
     db.update(table, t.toMap());
   }
+
+  Future<List<Revenu>> getAllFromDate(DateTime date) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where:
+            "dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')");
+    List<Revenu> transactions = [];
+    Revenu tmp;
+    for (var element in maps) {
+      tmp = await Revenu.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
 }

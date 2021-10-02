@@ -9,7 +9,8 @@ class Revenu extends ToDb {
   final int? id;
   final String nom;
   final double montant;
-  final DateTime date;
+  final DateTime dateInitial;
+  final DateTime dateActuel;
   final DateTime dateFin;
   final TypeTransaction type;
   final Color color;
@@ -19,7 +20,8 @@ class Revenu extends ToDb {
     this.id,
     required this.nom,
     required this.montant,
-    required this.date,
+    required this.dateInitial,
+    required this.dateActuel,
     required this.dateFin,
     required this.type,
     required this.compte,
@@ -32,7 +34,8 @@ class Revenu extends ToDb {
         id: map['idr'],
         nom: map['nom'],
         montant: map['montant'],
-        date: DateTime.parse(map['date']),
+        dateInitial: DateTime.parse(map['dateInitial']),
+        dateActuel: DateTime.parse(map['dateActuel']),
         dateFin: DateTime.parse(map['dateFin']),
         type: TypeTransaction.values[map['type']],
         color: Color(map['color']),
@@ -45,7 +48,8 @@ class Revenu extends ToDb {
       'idr': id,
       'nom': nom,
       'montant': montant,
-      'date': date.toString(),
+      'dateInitial': dateInitial.toString(),
+      'dateActuel': dateActuel.toString(),
       'dateFin': dateFin.toString(),
       'type': type.index,
       'compte': compte.id,
@@ -55,6 +59,6 @@ class Revenu extends ToDb {
 
   @override
   String toString() {
-    return 'Revenu(id: $id, nom: $nom, montant: $montant, date: $date, dateFin: $dateFin, type: $type, compte: $compte)';
+    return 'Revenu(id: $id, nom: $nom, montant: $montant, date: $dateActuel, dateInitial: $dateInitial, datefin: $dateFin, type: $type, compte: $compte)';
   }
 }

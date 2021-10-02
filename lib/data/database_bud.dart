@@ -14,7 +14,8 @@ class DatabaseBud {
   static final String _colorDb = 'color INTEGER NOT NULL,';
   static final String _nomDb = 'nom TEXT NOT NULL,';
   static final String _montantDb = 'montant REAL NOT NULL,';
-  static final String _dateDb = 'date TEXT NOT NULL,';
+  static final String _dateInitialDb = 'dateInitial TEXT NOT NULL,';
+  static final String _dateActuelDb = 'dateActuel TEXT NOT NULL,';
   static final String _dateFinDb = 'dateFin TEXT NOT NULL,';
   static final String _typeDb = 'type INTEGER NOT NULL,';
   static late Future<Database> _database;
@@ -39,15 +40,15 @@ class DatabaseBud {
       },
       onCreate: (db, version) async {
         await db.execute(
-            '$_creerDb $compte(idcpt INTEGER PRIMARY KEY AUTOINCREMENT, solde REAL, $_nomDb livret TEXT NOT NULL, $_colorDb lastModification TEXT NOT NULL, transactionId INTEGER)');
+            '$_creerDb $compte(idcpt INTEGER PRIMARY KEY AUTOINCREMENT, solde REAL, $_nomDb livret TEXT NOT NULL, $_colorDb lastModification TEXT NOT NULL)');
         await db.execute(
             '$_creerDb $categorie(idcat INTEGER PRIMARY KEY AUTOINCREMENT, $_nomDb plafond REAL NOT NULL, $_colorDb icon INTEGER NOT NULL)');
         await db.execute(
-            '$_creerDb $transaction(idt INTEGER PRIMARY KEY AUTOINCREMENT,$_nomDb $_montantDb $_dateDb $_dateFinDb $_typeDb compte INTEGER NOT NULL, categorie INTEGER NOT NULL, FOREIGN KEY (compte) REFERENCES $compte(idcpt) ON DELETE CASCADE, FOREIGN KEY (categorie) REFERENCES $categorie(idcat) ON DELETE CASCADE)');
+            '$_creerDb $transaction(idt INTEGER PRIMARY KEY AUTOINCREMENT,$_nomDb $_montantDb $_dateInitialDb $_dateActuelDb $_dateFinDb $_typeDb compte INTEGER NOT NULL, categorie INTEGER NOT NULL, FOREIGN KEY (compte) REFERENCES $compte(idcpt) ON DELETE CASCADE, FOREIGN KEY (categorie) REFERENCES $categorie(idcat) ON DELETE CASCADE)');
         await db.execute(
-            '$_creerDb $virement(idv INTEGER PRIMARY KEY AUTOINCREMENT, depuis INTEGER NOT NULL, vers INTEGER NOT NULL, $_montantDb $_dateDb $_dateFinDb  $_typeDb FOREIGN KEY (depuis) REFERENCES $compte(idcpt) ON DELETE CASCADE, FOREIGN KEY (vers) REFERENCES $compte(idcpt) ON DELETE CASCADE)');
+            '$_creerDb $virement(idv INTEGER PRIMARY KEY AUTOINCREMENT, depuis INTEGER NOT NULL, vers INTEGER NOT NULL, $_montantDb $_dateInitialDb $_dateActuelDb $_dateFinDb  $_typeDb FOREIGN KEY (depuis) REFERENCES $compte(idcpt) ON DELETE CASCADE, FOREIGN KEY (vers) REFERENCES $compte(idcpt) ON DELETE CASCADE)');
         await db.execute(
-            '$_creerDb $revenu(idr INTEGER PRIMARY KEY AUTOINCREMENT, $_nomDb $_montantDb $_dateDb $_dateFinDb $_typeDb $_colorDb compte INTEGER NOT NULL, FOREIGN KEY (compte) REFERENCES $compte(idcpt) ON DELETE CASCADE)');
+            '$_creerDb $revenu(idr INTEGER PRIMARY KEY AUTOINCREMENT, $_nomDb $_montantDb $_dateInitialDb $_dateActuelDb $_dateFinDb $_typeDb $_colorDb compte INTEGER NOT NULL, FOREIGN KEY (compte) REFERENCES $compte(idcpt) ON DELETE CASCADE)');
       },
       version: 1,
     );
