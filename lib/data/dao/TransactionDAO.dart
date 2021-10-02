@@ -39,22 +39,6 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getAllFromDateCategoriePourcentage(
-      DateTime date, int categorieId) async {
-    final db = await DatabaseBud.instance.database;
-    final List<Map<String, dynamic>> maps = await db.query(table,
-        where:
-            "categorie = ? AND dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')",
-        whereArgs: [categorieId]);
-    List<TransactionBud> transactions = [];
-    TransactionBud tmp;
-    for (var element in maps) {
-      tmp = await TransactionBud.fromDAO(element);
-      transactions.add(tmp);
-    }
-    return transactions;
-  }
-
   Future<List<TransactionBud>> transactionUnCompteJusquaAujourdhui(
       int idCompte) async {
     final db = await DatabaseBud.instance.database;
