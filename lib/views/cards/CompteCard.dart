@@ -1,14 +1,19 @@
 import 'package:budjet_app/classes/Compte.dart';
-import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/views/cards/CustomCard.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ComptesCard extends StatelessWidget {
   final Compte compte;
-  final TransactionBud? transaction;
   final Function onDelete;
-  ComptesCard({required this.compte, this.transaction, required this.onDelete});
+  final double entree;
+  final double sortie;
+  final double finDuMois;
+  ComptesCard(
+      {required this.compte,
+      required this.onDelete,
+      required this.entree,
+      required this.sortie,
+      required this.finDuMois});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +21,9 @@ class ComptesCard extends StatelessWidget {
       onTap: () {
         print('lala');
       },
-      modify: () {
-        print('modify this ${transaction.toString()}');
-      },
+      modify: () {},
       delete: () {
         onDelete(compte);
-        print('delete this ${transaction.toString()}');
       },
       child: Column(
         children: [
@@ -72,57 +74,26 @@ class ComptesCard extends StatelessWidget {
           ),
           SizedBox(height: 5),
           //BOTTOM OF THE CARD
-          bottom(),
+          Row(
+            children: [
+              Text('+${entree.toStringAsFixed(2)}€',
+                  style: TextStyle(color: Colors.green)),
+              Text('/'),
+              Text('-${sortie.toStringAsFixed(2)}€',
+                  style: TextStyle(color: Colors.red)),
+              Spacer(),
+              Row(
+                children: [
+                  Text('Prévision : '),
+                  Text('${finDuMois.toStringAsFixed(2)}€',
+                      style: TextStyle(
+                          color: finDuMois < 0 ? Colors.red : Colors.green))
+                ],
+              )
+            ],
+          )
         ],
       ),
     );
-  }
-
-  bottom() {
-    if (transaction != null) {
-      return Row(
-        //the bottom of the card
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: new BoxDecoration(
-              border: Border.all(
-                color: Colors.black,
-                width: 1,
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              transaction!.categorie.icon,
-              size: 24,
-            ),
-          ),
-          SizedBox(width: 5),
-          Expanded(
-            child: Column(
-              children: [
-                Text(transaction!.categorie.nom.toString(),
-                    style: TextStyle(fontSize: 18)),
-                Text(
-                    "le " +
-                        DateFormat('dd/MM/yyyy')
-                            .format(transaction!.dateActuel),
-                    style: TextStyle(fontSize: 13)),
-              ],
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ),
-          ),
-          Text(
-            transaction!.montant.toStringAsFixed(2) + '€',
-            style: TextStyle(
-                fontSize: 18,
-                color: transaction!.montant > 0 ? Colors.green : Colors.red),
-          ),
-        ],
-      );
-    } else {
-      return Text("Aucune transaction");
-    }
   }
 }

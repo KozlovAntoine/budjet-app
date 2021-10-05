@@ -1,8 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.budjet_app">
+    package="asey.fr.depense_prevision">
    <application
-        android:label="budjet_app"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Budjet"
+        android:icon="@mipmap/ic_launcher"
+        >
+        <meta-data 
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="ca-app-pub-1489348380925914~4649888694" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

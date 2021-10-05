@@ -103,7 +103,8 @@ class _PageTransactionState extends State<PageTransaction> {
 
   refresh() async {
     widgets = [];
-    List<TransactionBud> transactions = await dao.getAllFromDate(selectedDate);
+    List<TransactionBud> transactions =
+        await dao.getAllFromThisMonth(selectedDate);
     comptes = await compteDAO.getAll();
     categories = await categorieDAO.getAll();
     TransactionBud.dateDecroissant(transactions);

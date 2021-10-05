@@ -137,7 +137,7 @@ class VirementCard extends StatelessWidget {
     );
   }
 
-  _transfertInfo(Compte compte, double montant) {
+  /*_transfertInfo(Compte compte, double montant) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -163,7 +163,7 @@ class VirementCard extends StatelessWidget {
         ),
       ],
     );
-  }
+  }*/
 
   _centeredText(String txt) {
     return Center(

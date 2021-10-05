@@ -83,4 +83,52 @@ class VirementDAO extends DAO<Virement> {
     }
     return transactions;
   }
+
+  Future<List<Virement>> getAllFromDateCompteDepuis(
+      DateTime date, int compte) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where:
+            "depuis = ? AND dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')",
+        whereArgs: [compte]);
+    List<Virement> transactions = [];
+    Virement tmp;
+    for (var element in maps) {
+      tmp = await Virement.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
+
+  Future<List<Virement>> getAllFromDateCompteVers(
+      DateTime date, int compte) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where:
+            "vers = ? AND dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')",
+        whereArgs: [compte]);
+    List<Virement> transactions = [];
+    Virement tmp;
+    for (var element in maps) {
+      tmp = await Virement.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
+
+  Future<List<Virement>> getAllUntilTodayFromAccount(
+      int compte, bool depuis) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where: (depuis ? "depuis " : "vers ") +
+            "= ? AND dateActuel < date('now','+1 day')",
+        whereArgs: [compte]);
+    List<Virement> transactions = [];
+    Virement tmp;
+    for (var element in maps) {
+      tmp = await Virement.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
 }

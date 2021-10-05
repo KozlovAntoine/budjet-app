@@ -1,4 +1,3 @@
-import 'package:budjet_app/animation/snack.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Revenu.dart';
 import 'package:budjet_app/convert/DateHelper.dart';

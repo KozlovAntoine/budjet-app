@@ -1,4 +1,5 @@
 import 'package:budjet_app/classes/Categorie.dart';
+import 'package:budjet_app/data/dao/TransactionDAO.dart';
 
 import '../database_bud.dart';
 import 'DAO.dart';
@@ -43,17 +44,14 @@ class CategorieDAO implements DAO<Categorie> {
   }
 
   Future<double> getPourcentage(Categorie c) async {
-    final db = await DatabaseBud.instance.database;
     DateTime date = DateTime.now();
-    final List<Map<String, dynamic>> maps = await db.query(tableTransaction,
-        columns: ['montant'],
-        where:
-            "categorie = ? AND dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')",
-        whereArgs: [c.id]);
+    TransactionDAO transactionDAO = TransactionDAO();
+    final transactions =
+        await transactionDAO.getFromThisMonthCategorie(date, c.id!);
     double total = 0;
     double max = c.plafond;
-    for (var element in maps) {
-      total += element['montant'] as num;
+    for (var element in transactions) {
+      total += element.montant;
     }
     return (total * 100) / max;
   }

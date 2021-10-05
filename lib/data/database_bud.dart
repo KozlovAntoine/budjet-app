@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -32,7 +31,6 @@ class DatabaseBud {
   }
 
   Future<Database> _initDatabase() async {
-    WidgetsFlutterBinding.ensureInitialized();
     return await openDatabase(
       join(await getDatabasesPath(), 'mydb.db'),
       onConfigure: (db) async {

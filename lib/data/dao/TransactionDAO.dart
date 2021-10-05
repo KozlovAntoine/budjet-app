@@ -25,7 +25,7 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getAllFromDate(DateTime date) async {
+  Future<List<TransactionBud>> getAllFromThisMonth(DateTime date) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
         where:
@@ -39,12 +39,13 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> transactionUnCompteJusquaAujourdhui(
-      int idCompte) async {
+  Future<List<TransactionBud>> getAllFromThisMonthCompte(
+      DateTime date, int compte) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
-        where: "compte = ? AND dateActuel <= date('now','+1 day')",
-        whereArgs: [idCompte]);
+        where:
+            "compte = ? AND dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')",
+        whereArgs: [compte]);
     List<TransactionBud> transactions = [];
     TransactionBud tmp;
     for (var element in maps) {
@@ -54,10 +55,40 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getAllFromOneCategorie(int id) async {
+  Future<List<TransactionBud>> getAllUntilTodayFromAccount(int compte) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where: "compte = ? AND dateActuel < date('now','+1 day')",
+        whereArgs: [compte]);
+    List<TransactionBud> transactions = [];
+    TransactionBud tmp;
+    for (var element in maps) {
+      tmp = await TransactionBud.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
+
+  Future<List<TransactionBud>> getAllFromCategorie(int id) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps =
         await db.query(table, where: 'categorie = ?', whereArgs: [id]);
+    List<TransactionBud> transactions = [];
+    TransactionBud tmp;
+    for (var element in maps) {
+      tmp = await TransactionBud.fromDAO(element);
+      transactions.add(tmp);
+    }
+    return transactions;
+  }
+
+  Future<List<TransactionBud>> getFromThisMonthCategorie(
+      DateTime date, int categorie) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(table,
+        where:
+            "categorie = ? AND dateActuel BETWEEN date('${date.toString()}','start of month') AND date('${date.toString()}','start of month','+1 month')",
+        whereArgs: [categorie]);
     List<TransactionBud> transactions = [];
     TransactionBud tmp;
     for (var element in maps) {

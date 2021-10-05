@@ -1,5 +1,4 @@
 import 'package:budjet_app/classes/Compte.dart';
-import 'package:budjet_app/classes/Transaction.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/data/dao/TransactionDAO.dart';
 import 'package:budjet_app/pages/add/PageAddCompte.dart';
@@ -33,6 +32,7 @@ class _MesComptesPageState extends State<PageCompte> {
   void didUpdateWidget(covariant PageCompte oldWidget) {
     compteLoaded = false;
     super.didUpdateWidget(oldWidget);
+    refresh();
   }
 
   @override
@@ -79,14 +79,19 @@ class _MesComptesPageState extends State<PageCompte> {
     widgets = [];
     List<Compte> comptes = await dao.getAll();
     for (var element in comptes) {
+      double sortie = await dao.getSortieDuMois(element.id!);
+      double entree = await dao.getEntreeDuMois(element.id!);
+      double debutMois = await dao.getSoldeDebutDuMois(element.id!);
       widgets.add(ComptesCard(
         onDelete: delete,
         compte: element,
+        entree: entree,
+        sortie: sortie,
+        finDuMois: debutMois + entree - sortie,
       ));
     }
     setState(() {
       compteLoaded = true;
-      print('setState');
     });
   }
 

@@ -35,11 +35,18 @@ dependencies:
   sqflite: ^2.0.0+4
   path: ^1.8.0
   flutter_iconpicker: ^3.0.4
+  google_mobile_ads: ^0.13.5
+  flutter_launcher_icons: ^0.9.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "img/launcher.png"
+  image_path_android: "img/launcher.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
