@@ -33,15 +33,13 @@ class VirementCard extends StatelessWidget {
               'Virement de ' + virement.montant.toStringAsFixed(2) + '€'),
           SizedBox(height: 10),
           //_transfertInfo(virement.depuis, -virement.montant),
-          Row(
-            children: [
-              _bankInfo(virement.depuis),
-              Spacer(),
-              _centeredText('Vers'),
-              Spacer(),
-              _bankInfoRight(virement.vers),
-            ],
+
+          _bankInfo(virement.depuis),
+          //_centeredText('Vers'),
+          Center(
+            child: Icon(Icons.arrow_downward),
           ),
+          _bankInfo(virement.vers),
           SizedBox(height: 10),
 
           /**
@@ -98,40 +96,6 @@ class VirementCard extends StatelessWidget {
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  _bankInfoRight(Compte compte) {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(
-              compte.livret.name,
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 5),
-            Text(
-              compte.banque,
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-          ],
-        ),
-        SizedBox(
-          width: 10,
-        ),
-        Container(
-          //Cercle
-          width: 40,
-          height: 40,
-          decoration: new BoxDecoration(
-            color: compte.color,
-            shape: BoxShape.circle,
-          ),
         ),
       ],
     );

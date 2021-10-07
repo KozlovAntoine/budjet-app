@@ -25,13 +25,15 @@ class CompteDAO extends DAO<Compte> {
 
   Future<double> getSolde(int compteId) async {
     final db = await DatabaseBud.instance.database;
-    double montantTotal = 0;
+    final c = await db.query(table,
+        columns: ['solde'], where: 'idcpt = ?', whereArgs: [compteId]);
+    double montantTotal = c[0]['solde'] as double;
+    print('avant montantTotal $montantTotal');
     await db.query(tableTransaction,
         columns: ['montant'],
         where: "compte = ? AND dateActuel < date('now','+1 day')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal -= element['montant'] as num;
       });
     await db.query(tableVirement,
@@ -39,7 +41,6 @@ class CompteDAO extends DAO<Compte> {
         where: "depuis = ? AND dateActuel < date('now','+1 day')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal -= element['montant'] as num;
       });
     await db.query(tableVirement,
@@ -47,7 +48,6 @@ class CompteDAO extends DAO<Compte> {
         where: "vers = ? AND dateActuel < date('now','+1 day')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal += element['montant'] as num;
       });
     await db.query(tableRevenu,
@@ -55,21 +55,21 @@ class CompteDAO extends DAO<Compte> {
         where: "compte = ? AND dateActuel < date('now','+1 day')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal += element['montant'] as num;
       });
+    print('apres montantTotal $montantTotal');
     return montantTotal;
   }
 
   Future<double> getSoldeDebutDuMois(int compteId) async {
     final db = await DatabaseBud.instance.database;
-    double montantTotal = 0;
+    Compte c = await getFromId(compteId);
+    double montantTotal = c.soldeInitial;
     await db.query(tableTransaction,
         columns: ['montant'],
         where: "compte = ? AND dateActuel < date('now','start of month')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal -= element['montant'] as num;
       });
     await db.query(tableVirement,
@@ -77,7 +77,6 @@ class CompteDAO extends DAO<Compte> {
         where: "depuis = ? AND dateActuel < date('now','start of month')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal -= element['montant'] as num;
       });
     await db.query(tableVirement,
@@ -85,7 +84,6 @@ class CompteDAO extends DAO<Compte> {
         where: "vers = ? AND dateActuel < date('now','start of month')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal += element['montant'] as num;
       });
     await db.query(tableRevenu,
@@ -93,43 +91,42 @@ class CompteDAO extends DAO<Compte> {
         where: "compte = ? AND dateActuel < date('now','start of month')",
         whereArgs: [compteId])
       ..forEach((element) {
-        print('$element');
         montantTotal += element['montant'] as num;
       });
     return montantTotal;
   }
 
   Future<double> getSortieDuMois(int compteId) async {
-    final db = await DatabaseBud.instance.database;
     double montantTotal = 0;
     TransactionDAO t = TransactionDAO();
     VirementDAO v = VirementDAO();
-    final allT = await t.getAllFromThisMonthCompte(DateTime.now(), compteId);
-    final allV = await v.getAllFromDateCompteDepuis(DateTime.now(), compteId);
+    final allT =
+        await t.toutesLesTransactionsDunMoisDunCompte(DateTime.now(), compteId);
+    final allV =
+        await v.tousLesVirementsDunMoisCompteDepuis(DateTime.now(), compteId);
     allV.forEach((e) {
       montantTotal += e.montant;
     });
     allT.forEach((e) {
       montantTotal += e.montant;
     });
-    print('Sortie : $montantTotal');
     return montantTotal;
   }
 
   Future<double> getEntreeDuMois(int compteId) async {
-    final db = await DatabaseBud.instance.database;
     double montantTotal = 0;
     VirementDAO v = VirementDAO();
     RevenuDAO r = RevenuDAO();
-    final allV = await v.getAllFromDateCompteVers(DateTime.now(), compteId);
-    final allR = await r.getAllFromDateCompte(DateTime.now(), compteId);
+    final allV =
+        await v.tousLesVirementsDunMoisCompteVers(DateTime.now(), compteId);
+    final allR =
+        await r.tousLesRevenusDunMoisDunCompte(DateTime.now(), compteId);
     allV.forEach((e) {
       montantTotal += e.montant;
     });
     allR.forEach((e) {
       montantTotal += e.montant;
     });
-    print('Entree : $montantTotal');
     return montantTotal;
   }
 

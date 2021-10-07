@@ -37,6 +37,9 @@ dependencies:
   flutter_iconpicker: ^3.0.4
   google_mobile_ads: ^0.13.5
   flutter_launcher_icons: ^0.9.2
+  firebase_core: ^1.7.0
+  firebase_crashlytics: ^2.2.2
+  firebase_analytics: ^8.3.3
 
 dev_dependencies:
   flutter_test:

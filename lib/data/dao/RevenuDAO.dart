@@ -24,7 +24,7 @@ class RevenuDAO extends DAO<Revenu> {
     return revenus;
   }
 
-  Future<List<Revenu>> getAllFromOneCompte(int id) async {
+  Future<List<Revenu>> tousLesRevenusDuCompte(int id) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps =
         await db.query(table, where: 'compte = ?', whereArgs: [id]);
@@ -57,7 +57,7 @@ class RevenuDAO extends DAO<Revenu> {
     db.update(table, t.toMap());
   }
 
-  Future<List<Revenu>> getAllFromDate(DateTime date) async {
+  Future<List<Revenu>> tousLesRevenusDunMois(DateTime date) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
         where:
@@ -71,7 +71,8 @@ class RevenuDAO extends DAO<Revenu> {
     return transactions;
   }
 
-  Future<List<Revenu>> getAllFromDateCompte(DateTime date, int compte) async {
+  Future<List<Revenu>> tousLesRevenusDunMoisDunCompte(
+      DateTime date, int compte) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
         where:
@@ -86,7 +87,8 @@ class RevenuDAO extends DAO<Revenu> {
     return transactions;
   }
 
-  Future<List<Revenu>> getAllUntilTodayFromAccount(int compte) async {
+  Future<List<Revenu>> tousLesRevenusDunCompteJusquaAujourdhui(
+      int compte) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
         where: "compte = ? AND dateActuel < date('now','+1 day')",

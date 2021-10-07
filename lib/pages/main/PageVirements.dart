@@ -1,3 +1,4 @@
+import 'package:budjet_app/ad_manager.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Virement.dart';
 import 'package:budjet_app/convert/DateHelper.dart';
@@ -27,6 +28,8 @@ class _PageVirementState extends State<PageVirement> {
     dao = VirementDAO();
     compteDAO = CompteDAO();
     refresh();
+    AdManager.incr();
+    print('Interaction : ' + AdManager.interaction.toString());
   }
 
   @override

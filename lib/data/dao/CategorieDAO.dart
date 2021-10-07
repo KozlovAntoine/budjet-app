@@ -15,6 +15,18 @@ class CategorieDAO implements DAO<Categorie> {
   }
 
   @override
+  Future<int> insert(Categorie t) async {
+    final db = await DatabaseBud.instance.database;
+    return await db.insert(table, t.toMap());
+  }
+
+  @override
+  Future<void> update(Categorie t) async {
+    final db = await DatabaseBud.instance.database;
+    db.update(table, t.toMap());
+  }
+
+  @override
   Future<List<Categorie>> getAll() async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table);
@@ -31,23 +43,11 @@ class CategorieDAO implements DAO<Categorie> {
     return Categorie.fromDAO(maps[0]);
   }
 
-  @override
-  Future<int> insert(Categorie t) async {
-    final db = await DatabaseBud.instance.database;
-    return await db.insert(table, t.toMap());
-  }
-
-  @override
-  Future<void> update(Categorie t) async {
-    final db = await DatabaseBud.instance.database;
-    db.update(table, t.toMap());
-  }
-
-  Future<double> getPourcentage(Categorie c) async {
+  Future<double> pourcentageCategorie(Categorie c) async {
     DateTime date = DateTime.now();
     TransactionDAO transactionDAO = TransactionDAO();
-    final transactions =
-        await transactionDAO.getFromThisMonthCategorie(date, c.id!);
+    final transactions = await transactionDAO
+        .toutesLesTransactionsDuneCategorieDunMois(date, c.id!);
     double total = 0;
     double max = c.plafond;
     for (var element in transactions) {

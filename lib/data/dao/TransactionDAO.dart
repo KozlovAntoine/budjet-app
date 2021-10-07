@@ -8,7 +8,6 @@ class TransactionDAO extends DAO<TransactionBud> {
   @override
   Future<void> delete(TransactionBud t) async {
     final db = await DatabaseBud.instance.database;
-    print('delete from $table, $t');
     await db.delete(table, where: 'idt = ?', whereArgs: [t.id]);
   }
 
@@ -25,7 +24,8 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getAllFromThisMonth(DateTime date) async {
+  Future<List<TransactionBud>> toutesLesTransactionsDunMois(
+      DateTime date) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
         where:
@@ -39,7 +39,7 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getAllFromThisMonthCompte(
+  Future<List<TransactionBud>> toutesLesTransactionsDunMoisDunCompte(
       DateTime date, int compte) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
@@ -55,7 +55,8 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getAllUntilTodayFromAccount(int compte) async {
+  Future<List<TransactionBud>> toutesLesTransactionsDunCompteJusquaAujourdhui(
+      int compte) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
         where: "compte = ? AND dateActuel < date('now','+1 day')",
@@ -69,7 +70,8 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getAllFromCategorie(int id) async {
+  Future<List<TransactionBud>> toutesLesTransactionsDuneCategorie(
+      int id) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps =
         await db.query(table, where: 'categorie = ?', whereArgs: [id]);
@@ -82,7 +84,7 @@ class TransactionDAO extends DAO<TransactionBud> {
     return transactions;
   }
 
-  Future<List<TransactionBud>> getFromThisMonthCategorie(
+  Future<List<TransactionBud>> toutesLesTransactionsDuneCategorieDunMois(
       DateTime date, int categorie) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,

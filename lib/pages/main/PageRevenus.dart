@@ -1,3 +1,4 @@
+import 'package:budjet_app/ad_manager.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Revenu.dart';
 import 'package:budjet_app/convert/DateHelper.dart';
@@ -30,8 +31,9 @@ class _PageRevenusState extends State<PageRevenus> {
     selectedDate = DateTime.now();
     dao = RevenuDAO();
     compteDAO = CompteDAO();
-    print('init');
     refresh();
+    AdManager.incr();
+    print('Interaction : ' + AdManager.interaction.toString());
   }
 
   @override
@@ -96,7 +98,7 @@ class _PageRevenusState extends State<PageRevenus> {
 
   refresh() async {
     widgets = [];
-    List<Revenu> revenues = await dao.getAllFromDate(selectedDate);
+    List<Revenu> revenues = await dao.tousLesRevenusDunMois(selectedDate);
     comptes = await compteDAO.getAll();
     for (var element in revenues) {
       widgets.add(RevenuCard(

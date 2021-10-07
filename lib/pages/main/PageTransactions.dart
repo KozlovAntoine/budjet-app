@@ -1,3 +1,4 @@
+import 'package:budjet_app/ad_manager.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
@@ -36,6 +37,8 @@ class _PageTransactionState extends State<PageTransaction> {
     categorieDAO = CategorieDAO();
     selectedDate = DateTime.now();
     refresh();
+    AdManager.incr();
+    print('Interaction : ' + AdManager.interaction.toString());
   }
 
   @override
@@ -104,7 +107,7 @@ class _PageTransactionState extends State<PageTransaction> {
   refresh() async {
     widgets = [];
     List<TransactionBud> transactions =
-        await dao.getAllFromThisMonth(selectedDate);
+        await dao.toutesLesTransactionsDunMois(selectedDate);
     comptes = await compteDAO.getAll();
     categories = await categorieDAO.getAll();
     TransactionBud.dateDecroissant(transactions);

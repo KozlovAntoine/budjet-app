@@ -1,3 +1,4 @@
+import 'package:budjet_app/ad_manager.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/pages/add/PageAddCategorie.dart';
@@ -5,6 +6,7 @@ import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/CategorieCard.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class PageCategories extends StatefulWidget {
   @override
@@ -16,6 +18,10 @@ class _PageCategoriesState extends State<PageCategories> {
   List<CategorieCard> widgets = [];
   late CategorieDAO dao;
   bool categorieLoaded = false;
+  InterstitialAd? _interstitialAd;
+
+  int _numInterstitialLoadAttempts = 0;
+  final int maxFailedLoadAttempts = 3;
 
   @override
   void initState() {
@@ -23,12 +29,68 @@ class _PageCategoriesState extends State<PageCategories> {
     dao = CategorieDAO();
     categorieLoaded = false;
     refresh();
+    AdManager.incr();
+    print('Interaction : ' + AdManager.interaction.toString());
+    _createInterstitialAd();
   }
 
   @override
   void didUpdateWidget(covariant PageCategories oldWidget) {
     categorieLoaded = false;
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _interstitialAd?.dispose();
+  }
+
+  void _createInterstitialAd() async {
+    await InterstitialAd.load(
+        adUnitId: InterstitialAd.testAdUnitId,
+        request: AdManager.request,
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd!.setImmersiveMode(true);
+            if (AdManager.interaction % 20 == 0) _showInterstitialAd();
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts <= maxFailedLoadAttempts) {
+              _createInterstitialAd();
+            }
+          },
+        ));
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
+    AdManager.incr();
   }
 
   @override
@@ -77,7 +139,7 @@ class _PageCategoriesState extends State<PageCategories> {
     widgets = [];
     List<Categorie> categories = await dao.getAll();
     for (var element in categories) {
-      double p = await dao.getPourcentage(element);
+      double p = await dao.pourcentageCategorie(element);
       widgets.add(CategorieCard(
         categorie: element,
         pourcentage: p,

@@ -24,7 +24,7 @@ class VirementDAO extends DAO<Virement> {
     return virements;
   }
 
-  Future<List<Virement>> getAllFromOneCompteDepuis(int id) async {
+  Future<List<Virement>> tousLesVirementsCompteDepuis(int id) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps =
         await db.query(table, where: 'depuis = ?', whereArgs: [id]);
@@ -37,7 +37,7 @@ class VirementDAO extends DAO<Virement> {
     return virements;
   }
 
-  Future<List<Virement>> getAllFromOneCompteVers(int id) async {
+  Future<List<Virement>> tousLesVirementsCompteVers(int id) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps =
         await db.query(table, where: 'vers = ?', whereArgs: [id]);
@@ -70,7 +70,7 @@ class VirementDAO extends DAO<Virement> {
     db.update(table, t.toMap());
   }
 
-  Future<List<Virement>> getAllFromDate(DateTime date) async {
+  Future<List<Virement>> tousLesVirementsDunMois(DateTime date) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
         where:
@@ -84,7 +84,7 @@ class VirementDAO extends DAO<Virement> {
     return transactions;
   }
 
-  Future<List<Virement>> getAllFromDateCompteDepuis(
+  Future<List<Virement>> tousLesVirementsDunMoisCompteDepuis(
       DateTime date, int compte) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
@@ -100,7 +100,7 @@ class VirementDAO extends DAO<Virement> {
     return transactions;
   }
 
-  Future<List<Virement>> getAllFromDateCompteVers(
+  Future<List<Virement>> tousLesVirementsDunMoisCompteVers(
       DateTime date, int compte) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,
@@ -116,7 +116,7 @@ class VirementDAO extends DAO<Virement> {
     return transactions;
   }
 
-  Future<List<Virement>> getAllUntilTodayFromAccount(
+  Future<List<Virement>> tousVirementsJusquaAujourdui(
       int compte, bool depuis) async {
     final db = await DatabaseBud.instance.database;
     final List<Map<String, dynamic>> maps = await db.query(table,

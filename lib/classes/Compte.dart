@@ -31,7 +31,7 @@ class Compte extends ToDb {
     return Compte(
         id: map['idcpt'],
         soldeInitial: map['solde'],
-        soldeActuel: map['solde'] + soldeActuel,
+        soldeActuel: soldeActuel,
         livret: Livret.stringToLivret(map['livret']),
         banque: map['nom'],
         color: Color(map['color']),
