@@ -51,7 +51,7 @@ class _MesComptesPageState extends State<PageCompte> {
 
   void _createInterstitialAd() async {
     await InterstitialAd.load(
-        adUnitId: InterstitialAd.testAdUnitId,
+        adUnitId: 'ca-app-pub-1489348380925914/7488829439',
         request: AdManager.request,
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
@@ -59,7 +59,7 @@ class _MesComptesPageState extends State<PageCompte> {
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             _interstitialAd!.setImmersiveMode(true);
-            if (AdManager.interaction % 20 == 0) _showInterstitialAd();
+            if (AdManager.showAd) _showInterstitialAd();
           },
           onAdFailedToLoad: (LoadAdError error) {
             print('InterstitialAd failed to load: $error.');
@@ -93,7 +93,7 @@ class _MesComptesPageState extends State<PageCompte> {
     );
     _interstitialAd!.show();
     _interstitialAd = null;
-    AdManager.incr();
+    AdManager.closeAd();
   }
 
   @override
@@ -120,6 +120,7 @@ class _MesComptesPageState extends State<PageCompte> {
             if (value != null && value is Compte) {
               await dao.insert(value);
               refresh();
+              AdManager.incr();
             }
           });
         },

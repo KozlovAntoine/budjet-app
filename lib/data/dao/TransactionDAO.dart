@@ -1,4 +1,5 @@
 import 'package:budjet_app/classes/Transaction.dart';
+import 'package:budjet_app/convert/DateHelper.dart';
 
 import '../database_bud.dart';
 import 'DAO.dart';
@@ -119,5 +120,25 @@ class TransactionDAO extends DAO<TransactionBud> {
   Future<void> update(TransactionBud t) async {
     final db = await DatabaseBud.instance.database;
     db.update(table, t.toMap());
+  }
+
+  Future<void> insertAll(TransactionBud t) async {
+    DateTime tmp =
+        DateTime(t.dateInitial.year, t.dateInitial.month, t.dateInitial.day);
+    while (!tmp.isAfter(t.dateFin)) {
+      TransactionBud tmpTransac = TransactionBud(
+          categorie: t.categorie,
+          compte: t.compte,
+          montant: t.montant,
+          nom: t.nom,
+          type: t.type,
+          id: t.id,
+          dateInitial: t.dateInitial,
+          dateFin: t.dateFin,
+          dateActuel: tmp);
+      await insert(tmpTransac);
+      //on ajoute un mois
+      tmp = DateHelper.ajoutMois(tmp);
+    }
   }
 }

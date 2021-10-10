@@ -28,7 +28,7 @@ class CompteDAO extends DAO<Compte> {
     final c = await db.query(table,
         columns: ['solde'], where: 'idcpt = ?', whereArgs: [compteId]);
     double montantTotal = c[0]['solde'] as double;
-    print('avant montantTotal $montantTotal');
+    //print('avant montantTotal $montantTotal');
     await db.query(tableTransaction,
         columns: ['montant'],
         where: "compte = ? AND dateActuel < date('now','+1 day')",
@@ -57,7 +57,7 @@ class CompteDAO extends DAO<Compte> {
       ..forEach((element) {
         montantTotal += element['montant'] as num;
       });
-    print('apres montantTotal $montantTotal');
+    //print('apres montantTotal $montantTotal');
     return montantTotal;
   }
 

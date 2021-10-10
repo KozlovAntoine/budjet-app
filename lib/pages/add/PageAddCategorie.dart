@@ -132,7 +132,7 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
                         color: currentColor,
                         icon: _icon,
                       );
-                      print(categorie);
+                      //print(categorie);
                       Navigator.of(context).pop(categorie);
                     }
                   },
@@ -160,6 +160,6 @@ class _PageAddCategorieState extends State<PageAddCategorie> {
       setState(() {});
     }
 
-    debugPrint('Picked Icon:  $icon');
+    //debug//print('Picked Icon:  $icon');
   }
 }

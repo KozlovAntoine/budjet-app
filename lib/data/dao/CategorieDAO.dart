@@ -43,6 +43,13 @@ class CategorieDAO implements DAO<Categorie> {
     return Categorie.fromDAO(maps[0]);
   }
 
+  Future<Categorie> getFromName(String name) async {
+    final db = await DatabaseBud.instance.database;
+    final List<Map<String, dynamic>> maps =
+        await db.query(table, where: 'nom = ?', whereArgs: [name], limit: 1);
+    return Categorie.fromDAO(maps[0]);
+  }
+
   Future<double> pourcentageCategorie(Categorie c) async {
     DateTime date = DateTime.now();
     TransactionDAO transactionDAO = TransactionDAO();

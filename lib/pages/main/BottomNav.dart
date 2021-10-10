@@ -1,3 +1,4 @@
+import 'package:budjet_app/ad_manager.dart';
 import 'package:budjet_app/convert/DateHelper.dart';
 import 'package:flutter/material.dart';
 
@@ -28,8 +29,12 @@ class _BottomNavState extends State<BottomNav> {
           children: <Widget>[
             IconButton(
               tooltip: 'Mois précédent',
-              icon: const Icon(Icons.arrow_left),
+              icon: const Icon(
+                Icons.arrow_left,
+                color: Colors.white,
+              ),
               onPressed: () {
+                AdManager.incr();
                 setState(() {
                   if (current.month > 1)
                     current = new DateTime(current.year, current.month - 1, 1);
@@ -39,12 +44,22 @@ class _BottomNavState extends State<BottomNav> {
                 widget.changeDate(current);
               },
             ),
-            Text(DateHelper.moisAnnee.format(current)),
+            Text(
+              DateHelper.moisAnnee.format(current).capitalize(),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18),
+            ),
             IconButton(
               tooltip: 'Mois suivant',
-              icon: const Icon(Icons.arrow_right),
+              icon: const Icon(
+                Icons.arrow_right,
+                color: Colors.white,
+              ),
               onPressed: () {
                 setState(() {
+                  AdManager.incr();
                   if (current.month < 12)
                     current = new DateTime(current.year, current.month + 1, 1);
                   else
@@ -57,5 +72,11 @@ class _BottomNavState extends State<BottomNav> {
         ),
       ),
     );
+  }
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1)}";
   }
 }

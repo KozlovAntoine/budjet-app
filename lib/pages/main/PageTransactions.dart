@@ -2,7 +2,6 @@ import 'package:budjet_app/ad_manager.dart';
 import 'package:budjet_app/classes/Categorie.dart';
 import 'package:budjet_app/classes/Compte.dart';
 import 'package:budjet_app/classes/Transaction.dart';
-import 'package:budjet_app/convert/DateHelper.dart';
 import 'package:budjet_app/data/dao/CategorieDAO.dart';
 import 'package:budjet_app/data/dao/CompteDAO.dart';
 import 'package:budjet_app/data/dao/TransactionDAO.dart';
@@ -11,6 +10,7 @@ import 'package:budjet_app/pages/main/CustomMainPage.dart';
 import 'package:budjet_app/pages/menu/SideMenu.dart';
 import 'package:budjet_app/views/cards/TransactionCard.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'BottomNav.dart';
 
@@ -28,6 +28,10 @@ class _PageTransactionState extends State<PageTransaction> {
   late CategorieDAO categorieDAO;
   bool dbLoaded = false;
   late DateTime selectedDate;
+  InterstitialAd? _interstitialAd;
+
+  int _numInterstitialLoadAttempts = 0;
+  final int maxFailedLoadAttempts = 3;
 
   @override
   void initState() {
@@ -39,12 +43,66 @@ class _PageTransactionState extends State<PageTransaction> {
     refresh();
     AdManager.incr();
     print('Interaction : ' + AdManager.interaction.toString());
+    _createInterstitialAd();
   }
 
   @override
   void didUpdateWidget(covariant PageTransaction oldWidget) {
     dbLoaded = false;
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _interstitialAd?.dispose();
+  }
+
+  void _createInterstitialAd() async {
+    await InterstitialAd.load(
+        adUnitId: 'ca-app-pub-1489348380925914/7488829439',
+        request: AdManager.request,
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            print('$ad loaded');
+            _interstitialAd = ad;
+            _numInterstitialLoadAttempts = 0;
+            _interstitialAd!.setImmersiveMode(true);
+            if (AdManager.showAd) _showInterstitialAd();
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error.');
+            _numInterstitialLoadAttempts += 1;
+            _interstitialAd = null;
+            if (_numInterstitialLoadAttempts <= maxFailedLoadAttempts) {
+              _createInterstitialAd();
+            }
+          },
+        ));
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (InterstitialAd ad) =>
+          print('ad onAdShowedFullScreenContent.'),
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        print('$ad onAdDismissedFullScreenContent.');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        print('$ad onAdFailedToShowFullScreenContent: $error');
+        ad.dispose();
+        _createInterstitialAd();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
+    AdManager.closeAd();
   }
 
   @override
@@ -93,8 +151,9 @@ class _PageTransactionState extends State<PageTransaction> {
                       )))
               .then((newTransaction) async {
             if (newTransaction != null && newTransaction is TransactionBud) {
-              await insertAll(newTransaction);
+              await dao.insertAll(newTransaction);
               refresh();
+              AdManager.incr();
             }
           });
         },
@@ -120,26 +179,6 @@ class _PageTransactionState extends State<PageTransaction> {
     setState(() {
       dbLoaded = true;
     });
-  }
-
-  Future<void> insertAll(TransactionBud t) async {
-    DateTime tmp =
-        DateTime(t.dateInitial.year, t.dateInitial.month, t.dateInitial.day);
-    while (!tmp.isAfter(t.dateFin)) {
-      TransactionBud tmpTransac = TransactionBud(
-          categorie: t.categorie,
-          compte: t.compte,
-          montant: t.montant,
-          nom: t.nom,
-          type: t.type,
-          id: t.id,
-          dateInitial: t.dateInitial,
-          dateFin: t.dateFin,
-          dateActuel: tmp);
-      await dao.insert(tmpTransac);
-      //on ajoute un mois
-      tmp = DateHelper.ajoutMois(tmp);
-    }
   }
 
   void delete(TransactionBud t) async {

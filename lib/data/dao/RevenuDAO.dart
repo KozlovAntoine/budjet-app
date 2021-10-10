@@ -1,4 +1,5 @@
 import 'package:budjet_app/classes/Revenu.dart';
+import 'package:budjet_app/convert/DateHelper.dart';
 import 'package:budjet_app/data/database_bud.dart';
 
 import 'DAO.dart';
@@ -100,5 +101,25 @@ class RevenuDAO extends DAO<Revenu> {
       transactions.add(tmp);
     }
     return transactions;
+  }
+
+  Future<void> insertAll(Revenu t) async {
+    DateTime tmp =
+        DateTime(t.dateInitial.year, t.dateInitial.month, t.dateInitial.day);
+    while (!tmp.isAfter(t.dateFin)) {
+      Revenu r = Revenu(
+          color: t.color,
+          compte: t.compte,
+          montant: t.montant,
+          nom: t.nom,
+          type: t.type,
+          id: t.id,
+          dateInitial: t.dateInitial,
+          dateFin: t.dateFin,
+          dateActuel: tmp);
+      await insert(r);
+      //on ajoute un mois
+      tmp = DateHelper.ajoutMois(tmp);
+    }
   }
 }
